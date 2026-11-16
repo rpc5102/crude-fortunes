@@ -17,3 +17,7 @@ export const SPECIAL = {
   /** Forces the next round to be the CALL fortune. */
   missingPerson: /become a missing person/i,
 } as const;
+
+/** True for the call and any fortune that triggers a special event. */
+export const isSpecial = (fortune: string): boolean =>
+  fortune === CALL || Object.values(SPECIAL).some((pattern) => pattern.test(fortune));
