@@ -2,3 +2,4 @@
 import "./stamp";
 import "./finger";
 import "./dodge";
+import "./hungry";

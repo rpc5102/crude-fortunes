@@ -365,14 +365,42 @@ function raspberry(e: Engine): void {
   const flap = ac.createGain(); flap.gain.setValueCurveAtTime(chop, t, dur);
   const bp = ac.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 750; bp.Q.value = 0.8;
   const env = ac.createGain();
-  env.gain.setValueAtTime(0.0001, t); env.gain.exponentialRampToValueAtTime(0.7, t + 0.02);
-  env.gain.setValueAtTime(0.7, t + dur - 0.12); env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  env.gain.setValueAtTime(0.0001, t); env.gain.exponentialRampToValueAtTime(1, t + 0.02);
+  env.gain.setValueAtTime(1, t + dur - 0.12); env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(bp).connect(flap).connect(env).connect(fx);
   o.start(t); o.stop(t + dur + 0.02);
   noiseHit(e, t, { freq: 1600, q: 0.9, dur: 0.4, vol: 0.3 });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry };
+// swallowing: a quick falling bloop
+function gulp(e: Engine): void {
+  const t = e.ac.currentTime + 0.01;
+  tone(e, t, { f0: 320, f1: 115, dur: 0.16, vol: 0.5 });
+  tone(e, t + 0.02, { f0: 640, f1: 230, dur: 0.1, vol: 0.12 });
+}
+
+// a big rattly burp: a sawtooth through an open "aw" vowel, the throat rattling ~35/s
+function burp(e: Engine): void {
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.02, dur = 0.85;
+  const o = ac.createOscillator(); o.type = "sawtooth";
+  o.frequency.setValueAtTime(108, t); o.frequency.linearRampToValueAtTime(128, t + 0.15); o.frequency.linearRampToValueAtTime(80, t + dur);
+  const m = Math.round(dur * 70), fry = new Float32Array(m);
+  for (let i = 0; i < m; i++) fry[i] = i % 2 ? 0.25 + Math.random() * 0.35 : 1;
+  const rattle = ac.createGain(); rattle.gain.setValueCurveAtTime(fry, t, dur);
+  const f1 = ac.createBiquadFilter(), f2 = ac.createBiquadFilter(), body = ac.createBiquadFilter(), bodyGain = ac.createGain();
+  f1.type = "bandpass"; f1.frequency.value = 620; f1.Q.value = 3.5;
+  f2.type = "bandpass"; f2.frequency.value = 1050; f2.Q.value = 4.5;
+  body.type = "lowpass"; body.frequency.value = 900; bodyGain.gain.value = 0.35;
+  o.connect(f1).connect(rattle); o.connect(f2).connect(rattle); o.connect(body).connect(bodyGain).connect(rattle);
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0.0001, t); env.gain.exponentialRampToValueAtTime(0.8, t + 0.05);
+  env.gain.setValueAtTime(0.8, t + dur - 0.25); env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  rattle.connect(env).connect(fx);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {
