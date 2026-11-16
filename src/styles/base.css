@@ -1,0 +1,30 @@
+/* Layout: one screen. Seal on top, cookie stage in the middle, controls at the bottom,
+   all inside a gold fretwork frame on hongbao red. Single theme by design. */
+:root {
+  --red: #C3102A;
+  --red-hi: #DE2234;
+  --red-deep: #7E0818;
+  --gold-hi: #FCEBB0;
+  --gold: #E3B54C;
+  --gold-lo: #A8761C;
+  --ink: #BF2430;
+  --paper: #FBF7EC;
+  --font-display: "Marcellus", "Cormorant Garamond", Georgia, serif;
+  --font-body: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  --font-han: "Ma Shan Zheng", "Kaiti SC", "STKaiti", "KaiTi", serif;
+  --gold-foil: linear-gradient(115deg, var(--gold-lo) 0%, var(--gold) 22%, var(--gold-hi) 38%, var(--gold) 52%, var(--gold-lo) 70%, var(--gold) 86%, var(--gold-hi) 100%);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  background-color: var(--red);
+  background-image: radial-gradient(ellipse 90% 70% at 50% 42%, var(--red-hi) 0%, var(--red) 55%, var(--red-deep) 100%);
+  background-attachment: fixed;
+  color: var(--gold-hi);
+  font-family: var(--font-body);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}

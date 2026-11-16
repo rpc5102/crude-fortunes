@@ -1,0 +1,9 @@
+@media (max-height: 640px) {
+  .seal { width: 48px; height: 48px; }
+  .seal span { font-size: 32px; }
+  .page { padding-top: calc(env(safe-area-inset-top) + 26px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bob, .seal span, .clouds, .ominous .doom { animation: none; }
+}
