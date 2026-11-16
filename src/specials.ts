@@ -26,6 +26,8 @@ export const SPECIAL = {
   stamped: /(has|have) been (reviewed|processed|forwarded)/,
   /** A finger pokes out of the cookie; tapping pulls it. You know what happens. */
   finger: /^Pull my finger\./,
+  /** The closed cookie dodges your first three taps, blowing raspberries. */
+  untouchable: /didn't want to be touched by you/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

@@ -354,7 +354,25 @@ function fart(e: Engine): void {
   noiseHit(e, t + dur - 0.12, { freq: 700, q: 1.5, dur: 0.12, vol: 0.35 });               // the final pfft
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart };
+// blowing a raspberry: a buzzy low tone chopped by flapping lips, plus breath
+function raspberry(e: Engine): void {
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.01, dur = 0.5;
+  const o = ac.createOscillator(); o.type = "sawtooth";
+  o.frequency.setValueAtTime(78, t); o.frequency.linearRampToValueAtTime(62, t + dur);
+  const m = Math.round(dur * 76), chop = new Float32Array(m);
+  for (let i = 0; i < m; i++) chop[i] = i % 2 ? 0.08 + Math.random() * 0.1 : 0.85 + Math.random() * 0.15;
+  const flap = ac.createGain(); flap.gain.setValueCurveAtTime(chop, t, dur);
+  const bp = ac.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 750; bp.Q.value = 0.8;
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0.0001, t); env.gain.exponentialRampToValueAtTime(0.7, t + 0.02);
+  env.gain.setValueAtTime(0.7, t + dur - 0.12); env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(bp).connect(flap).connect(env).connect(fx);
+  o.start(t); o.stop(t + dur + 0.02);
+  noiseHit(e, t, { freq: 1600, q: 0.9, dur: 0.4, vol: 0.3 });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {
