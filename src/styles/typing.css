@@ -1,0 +1,24 @@
+/* ---------- "Your crush is typing..." ---------- */
+.typing-wrap {
+  position: absolute; left: 9%; top: calc(100% + 14px);
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px; pointer-events: none;
+}
+.typing {
+  position: relative; display: none; gap: 5px; padding: 11px 14px;
+  border-radius: 18px; background: #ECECEE; box-shadow: 0 4px 10px rgba(60, 0, 8, 0.3);
+}
+.typing.on { display: inline-flex; animation: bubble-in 0.18s ease-out; }
+/* the little tail */
+.typing::before, .typing::after { content: ""; position: absolute; border-radius: 50%; background: #ECECEE; }
+.typing::before { left: -3px; bottom: -3px; width: 12px; height: 12px; }
+.typing::after { left: -9px; bottom: -8px; width: 6px; height: 6px; }
+.typing i { width: 8px; height: 8px; border-radius: 50%; background: #8E8E93; animation: typing-dot 1.2s ease-in-out infinite; }
+.typing i:nth-child(2) { animation-delay: 0.15s; }
+.typing i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typing-dot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+@keyframes bubble-in { from { transform: scale(0.6); opacity: 0; } }
+.seen { display: none; margin: 0; padding-left: 4px; font: 600 11px/1 var(--font-body); letter-spacing: 0.02em; color: var(--gold-hi); text-shadow: 0 1px 2px rgba(60, 0, 8, 0.9), 0 0 6px rgba(60, 0, 8, 0.6); }
+.seen.on { display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .typing.on, .typing i { animation: none; }
+}

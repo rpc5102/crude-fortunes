@@ -16,6 +16,46 @@ export const SPECIAL = {
   noFortune: /contain no fortune/,
   /** Forces the next round to be the CALL fortune. */
   missingPerson: /become a missing person/i,
+  /** Plays a spooky sci-fi jingle when the slip lands. */
+  believe: /I want to believe/,
+  /** A security-camera REC overlay; the seal grows eyes that follow your finger. */
+  fbi: /The FBI is watching/,
+  /** Sepia, film grain and a music-box version of the tune. */
+  victorian: /Victorian child/,
+  /** A red DENIED / REJECTED / IGNORED rubber stamp slams onto the slip. */
+  stamped: /(has|have) been (reviewed|processed|forwarded)/,
+  /** A finger pokes out of the cookie; tapping pulls it. You know what happens. */
+  finger: /^Pull my finger\./,
+  /** The closed cookie dodges your first three taps, blowing raspberries. */
+  untouchable: /didn't want to be touched by you/,
+  /** The halves snap shut on the slip, munch it, gulp and burp. */
+  hungry: /This cookie is still hungry/,
+  /** A thermal receipt prints out, itemizing your shameful stats. */
+  bill: /Your bill has arrived/,
+  /** The screen glitches out and a retro error dialog blames you. */
+  crash: /Fortune\.exe has stopped believing in you/,
+  /** A fly buzzes around the screen until you swat it. */
+  fly: /Something in here smells like you/,
+  /** Tapping flips the slip over. The back is not kind. */
+  flipside: /Your real fortune is written on the back/,
+  /** A typing bubble comes and goes under the slip, then: Seen. */
+  typing: /Your crush is typing/,
+  /** A countdown on the slip, then it blows up and burns to ash. */
+  selfDestruct: /will self-destruct in 5 seconds/,
+  /** A cheap trophy drops in to a sad kazoo fanfare; its handle falls off. */
+  trophy: /participation trophy/,
+  /** One person slow-claps, alone, then coughs. */
+  slowClap: /round of applause for your effort/,
+  /** A notification: unsubscribed from good luck. Its Undo button doesn't. */
+  unsubscribed: /unsubscribed from good luck/,
+  /** The lights go down and something's eyes open in the dark. */
+  behind: /Don't look behind you/,
+  /** A progress bar crawls to 99%, stalls, and fails: personality not found. */
+  loading: /Your personality is loading/,
+  /** Everything floats up and away to a slide whistle. */
+  gravity: /Gravity has given up on you/,
+  /** A raccoon paw darts in and yanks the slip away. */
+  snatch: /Hold on to this one/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

@@ -1,0 +1,16 @@
+/* ---------- "Something in here smells like you." ---------- */
+.fly {
+  position: fixed; left: 0; top: 0; z-index: 9; width: 34px; height: 34px;
+  cursor: crosshair; touch-action: none; -webkit-tap-highlight-color: transparent;
+}
+.fly[hidden] { display: none; }
+.fly::before { content: ""; position: absolute; inset: -16px; }   /* a fair chance to hit it */
+.fly svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.fly-wings { transform-box: fill-box; transform-origin: 50% 80%; animation: wingbeat 0.05s steps(1) infinite; }
+@keyframes wingbeat { 50% { transform: scaleY(0.55); opacity: 0.6; } }
+.fly-splat { display: none; scale: 1.5; }
+.fly.splatted { cursor: default; }
+.fly.splatted .fly-alive { display: none; }
+.fly.splatted .fly-splat { display: block; }
+.fly:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 4px; border-radius: 50%; }
+@media (prefers-reduced-motion: reduce) { .fly-wings { animation: none; } }

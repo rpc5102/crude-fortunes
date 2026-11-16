@@ -14,5 +14,7 @@ export const game = {
   forceCall: false,
   slipShown: false,
   crushed: false,
+  /** Rare golden cookie, 1 in 100. */
+  golden: false,
   mode: "crude" as Mode,
 };

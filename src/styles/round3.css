@@ -1,0 +1,14 @@
+/* ---------- "Your personality is loading..." ---------- */
+.loadbar { position: absolute; left: 12%; right: 12%; top: calc(100% + 10px); }
+.loadbar[hidden] { display: none; }
+.loadbar-track { height: 8px; border-radius: 4px; background: rgba(40, 0, 6, 0.55); box-shadow: inset 0 0 0 1px rgba(252, 235, 176, 0.5); overflow: hidden; }
+.loadbar-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--gold-lo), var(--gold-hi)); transition: width 0.35s ease-out; }
+.loadbar-label { margin: 6px 0 0; text-align: center; font: 600 11px/1.2 var(--font-body); color: var(--gold-hi); text-shadow: 0 1px 2px rgba(60, 0, 8, 0.9); }
+.loadbar.failed .loadbar-fill { background: #E8452F; }
+.loadbar.failed .loadbar-label { color: #FFD0C8; }
+
+/* ---------- "Hold on to this one. Tight." ---------- */
+.paw { position: fixed; right: 0; z-index: 9; width: min(42vw, 170px); pointer-events: none; }
+.paw[hidden] { display: none; }
+.paw svg { display: block; width: 100%; overflow: visible; }
+.paw-fingers { transform-box: fill-box; transform-origin: 100% 50%; }

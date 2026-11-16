@@ -1,0 +1,50 @@
+/* ---------- "Fortune.exe has stopped believing in you." ---------- */
+.glitching .page { animation: glitch-jitter 0.16s steps(1) infinite; }
+@keyframes glitch-jitter {
+  0% { translate: 0 0; } 25% { translate: -7px 2px; } 50% { translate: 5px -3px; } 75% { translate: -3px 0; }
+}
+.glitch-bars {
+  position: fixed; inset: 0; z-index: 7; pointer-events: none; display: none;
+  background:
+    linear-gradient(transparent 12%, rgba(0, 255, 240, 0.55) 12% 14%, transparent 14% 41%, rgba(255, 0, 200, 0.5) 41% 44%, transparent 44% 63%,
+      rgba(255, 255, 255, 0.6) 63% 64%, transparent 64% 82%, rgba(0, 255, 120, 0.45) 82% 86%, transparent 86%);
+  mix-blend-mode: difference;
+}
+.glitching .glitch-bars { display: block; animation: glitch-bars 0.12s steps(1) infinite; }
+@keyframes glitch-bars {
+  0% { transform: translateY(0) scaleY(1); } 33% { transform: translateY(-17%) scaleY(1.6); } 66% { transform: translateY(23%) scaleY(0.7); }
+}
+
+.crash {
+  position: fixed; inset: 0; z-index: 19;
+  display: grid; place-items: center; padding: 24px;
+  background: rgba(20, 0, 4, 0.35);
+}
+.crash[hidden] { display: none; }
+.crash-win {
+  width: min(320px, 100%);
+  background: #C9C3BE; color: #111;
+  border: 2px solid; border-color: #F4F0EC #5A5450 #5A5450 #F4F0EC;
+  box-shadow: 0 0 0 1px #1C1814, 0 14px 30px rgba(0, 0, 0, 0.5);
+  font: 13px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.crash-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 6px 4px 8px; color: #fff; font-weight: 700;
+  background: linear-gradient(90deg, #7E0818, #C3102A 70%, #DE2234);
+}
+.crash-x {
+  width: 18px; height: 16px; display: grid; place-items: center; font-size: 11px; color: #111;
+  background: #C9C3BE; border: 1.5px solid; border-color: #F4F0EC #5A5450 #5A5450 #F4F0EC;
+}
+.crash-body { display: flex; gap: 12px; align-items: flex-start; padding: 16px 14px 10px; }
+.crash-body svg { flex: none; width: 34px; height: 34px; }
+.crash-body p { margin: 0; }
+.crash-body small { display: block; margin-top: 8px; font-size: 11px; color: #3A3430; }
+.crash-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 6px 14px 14px; }
+.crash-actions button {
+  font: inherit; color: #111; min-width: 84px; padding: 5px 10px; cursor: pointer;
+  background: #C9C3BE; border: 2px solid; border-color: #F4F0EC #5A5450 #5A5450 #F4F0EC;
+}
+.crash-actions button:active { border-color: #5A5450 #F4F0EC #F4F0EC #5A5450; }
+.crash-actions button:focus-visible { outline: 1px dotted #111; outline-offset: -5px; }

@@ -1,0 +1,15 @@
+/* ---------- "Your real fortune is written on the back." ---------- */
+.slip-back {
+  position: absolute; inset: 0; display: none;
+  flex-direction: column; justify-content: center; align-items: center; gap: 2px;
+  padding: 10px 20px; text-align: center;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+.slip-back-insult { font-size: 12px; font-style: italic; text-shadow: 0 0 0.6px rgba(191, 36, 48, 0.7); }
+.slip-paper.flippable { transform-style: preserve-3d; }
+.slip-paper.flippable > :not(.slip-back) { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.slip-paper.flippable .slip-back { display: flex; }
+/* reduced motion: no 3D, the back simply replaces the front */
+.slip-paper.flipped-flat > :not(.slip-back) { visibility: hidden; }
+.slip-paper.flipped-flat .slip-back { display: flex; transform: none; }
