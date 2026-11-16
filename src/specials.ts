@@ -34,6 +34,8 @@ export const SPECIAL = {
   bill: /Your bill has arrived/,
   /** The screen glitches out and a retro error dialog blames you. */
   crash: /Fortune\.exe has stopped believing in you/,
+  /** A fly buzzes around the screen until you swat it. */
+  fly: /Something in here smells like you/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

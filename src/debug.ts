@@ -25,6 +25,7 @@ const CASES: [label: string, setup: RoundSetup][] = [
   ["Hungry cookie", { fortune: findFortune(SPECIAL.hungry) }],
   ["The bill", { fortune: findFortune(SPECIAL.bill) }],
   ["Fortune.exe crash", { fortune: findFortune(SPECIAL.crash) }],
+  ["Fly", { fortune: findFortune(SPECIAL.fly) }],
   ["Knows the time", { fortune: findFortune(/\{time\}/) }],
   ["Empty cookie", { empty: true }],
   ["Chopsticks", { kind: "sticks" }],

@@ -251,6 +251,50 @@ export function printerSound(lines: number, step: number): void {
   src.connect(bp).connect(g).connect(fx); src.start(t); src.stop(t + dur + 0.15);
 }
 
+/** Controls the fly's buzz started by startBuzz(). */
+export interface BuzzSound {
+  /** pan: -1 (left) to 1 (right); speed: 0 (hovering) to 1 (darting). */
+  move(pan: number, speed: number): void;
+  stop(): void;
+}
+
+/** A housefly: two sawtooths through a band-pass, fluttered by its wingbeat, panned with it. */
+export function startBuzz(): BuzzSound | null {
+  const e = ensure();
+  if (!e) return null;
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.02;
+  const o = ac.createOscillator(), o2 = ac.createOscillator(), o2g = ac.createGain();
+  o.type = o2.type = "sawtooth"; o.frequency.value = 180; o2.frequency.value = 362; o2g.gain.value = 0.5;
+  const bp = ac.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 1200; bp.Q.value = 0.7;
+  const wing = ac.createGain(), lfo = ac.createOscillator(), depth = ac.createGain();
+  wing.gain.value = 0.6; lfo.frequency.value = 23; depth.gain.value = 0.4; lfo.connect(depth).connect(wing.gain);
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0.0001, t); env.gain.exponentialRampToValueAtTime(0.1, t + 0.3);
+  const pan = typeof ac.createStereoPanner === "function" ? ac.createStereoPanner() : null;
+  o.connect(bp); o2.connect(o2g).connect(bp);
+  bp.connect(wing).connect(env);
+  if (pan) env.connect(pan).connect(fx); else env.connect(fx);
+  [o, o2, lfo].forEach((n) => n.start(t));
+  let stopped = false;
+  return {
+    move(p, speed) {
+      if (stopped) return;
+      const now = ac.currentTime, f = 165 + speed * 70;
+      pan?.pan.setTargetAtTime(Math.max(-1, Math.min(1, p)), now, 0.05);
+      o.frequency.setTargetAtTime(f, now, 0.08); o2.frequency.setTargetAtTime(f * 2.01, now, 0.08);
+      env.gain.setTargetAtTime(0.05 + 0.11 * speed, now, 0.08);
+    },
+    stop() {
+      if (stopped) return;
+      stopped = true;
+      const now = ac.currentTime;
+      env.gain.cancelScheduledValues(now); env.gain.setTargetAtTime(0.0001, now, 0.05);
+      [o, o2, lfo].forEach((n) => n.stop(now + 0.35));
+    },
+  };
+}
+
 /** Controls the slot-machine reel sound started by startReelSound(). */
 export interface ReelSound {
   /** Reel `i` has stopped; `left` reels are still spinning. */
@@ -439,7 +483,15 @@ function errorChime(e: Engine): void {
   tone(e, t + 0.16, { f0: 587, dur: 0.4, vol: 0.2, type: "triangle" });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime };
+// swatting a fly: the slap, a squelch, the crunch of tiny legs
+function squish(e: Engine): void {
+  const t = e.ac.currentTime + 0.005;
+  noiseHit(e, t, { freq: 700, q: 0.8, dur: 0.12, vol: 1, type: "lowpass" });
+  tone(e, t, { f0: 420, f1: 90, dur: 0.18, vol: 0.4 });
+  noiseHit(e, t + 0.05, { freq: 2400, q: 4, dur: 0.06, vol: 0.3 });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {
