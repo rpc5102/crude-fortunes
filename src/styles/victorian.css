@@ -1,0 +1,31 @@
+/* ---------- "Victorian child": sepia film ---------- */
+.vic { position: fixed; inset: 0; z-index: 7; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
+.victorian .vic { opacity: 1; }
+/* hue and saturation from a sepia brown, brightness from the page */
+.vic-tint { background: #7A5230; mix-blend-mode: color; }
+.vic-vignette { background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(40, 22, 8, 0) 55%, rgba(40, 22, 8, 0.6)); }
+.vic-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='7'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px; mix-blend-mode: overlay;
+}
+.victorian .vic-grain { opacity: 0.45; animation: grain 0.5s steps(1) infinite; }
+@keyframes grain {
+  0% { background-position: 0 0; } 20% { background-position: -40px 30px; } 40% { background-position: 50px -20px; }
+  60% { background-position: -25px -45px; } 80% { background-position: 35px 15px; }
+}
+.vic-flicker { background: rgb(30, 15, 0); }
+.victorian .vic-flicker { opacity: 0; animation: flicker 2.6s linear infinite; }
+@keyframes flicker {
+  0%, 6%, 9%, 40%, 43%, 76%, 79%, 100% { opacity: 0; }
+  7% { opacity: 0.08; } 41% { opacity: 0.05; } 77% { opacity: 0.09; }
+}
+.vic-scratch { inset: 0 auto 0 30%; width: 1px; background: rgba(55, 35, 15, 0.55); }
+.victorian .vic-scratch { opacity: 0; animation: scratch 1.7s steps(1) infinite; }
+@keyframes scratch {
+  0% { left: 22%; opacity: 0.6; } 23% { left: 71%; opacity: 0; } 41% { left: 46%; opacity: 0.5; }
+  70% { left: 13%; opacity: 0.6; } 86% { left: 83%; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .victorian .vic-grain { animation: none; }
+  .victorian .vic-flicker, .victorian .vic-scratch { animation: none; opacity: 0; }
+}

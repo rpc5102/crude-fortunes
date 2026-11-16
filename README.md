@@ -9,8 +9,9 @@ Built with Vite and vanilla TypeScript. Music and sound effects are synthesized 
 - **Chopsticks** (1 in 10): split them for an extra-crude fortune
 - **Empty cookie** (1 in 25): no slip, just a sad poof
 - **Hold to crush**: press and hold to crush the cookie into a ruined paper ball
+- **Golden cookie** (1 in 100): gold foil with a shine, a choir chord, a gold-edged slip and lucky numbers 7 7 7 7 7 7
 - **Rage mode**: tap 6 times fast and the cookie insults your impatience
-- **Special fortunes**: The Council (dark mode, 6 6 6 6 6 6), the call from inside the house (fake incoming call, set up by "missing person"), Mercury in retrograde (upside-down cookie), "no fortune" (? lucky numbers)
+- **Special fortunes**: The Council (dark mode, 6 6 6 6 6 6), the call from inside the house (fake incoming call, set up by "missing person"), Mercury in retrograde (upside-down cookie), "no fortune" (the lucky numbers spin like slot-machine reels and land on ?), "I want to believe" (spooky sci-fi jingle, then the cookie gets abducted by a UFO when you tap for the next one), "The FBI is watching" (security-camera REC overlay; the seal grows eyes that follow your finger), "Victorian child" (sepia film with grain and a music-box version of the tune)
 - Background music and sound effects with a Sound on/off toggle
 
 ## Develop
@@ -20,6 +21,11 @@ npm run dev        # local dev server
 npm run build      # type-check, then build to dist/
 npm run preview    # serve the production build
 ```
+
+## Debug mode
+Add `?debug` to the URL (works on the deployed site too, e.g. on a phone). A **Debug** button appears top right; pick a case and tap the cookie to play it:
+The Council, Mercury retrograde, No fortune, Missing person (then tap again for the call), The call, I want to believe, FBI watching, Victorian child, Golden cookie, Empty cookie, Chopsticks, and Rage now.
+Hold-to-crush needs no setup: hold any cookie.
 
 ## Editing fortunes
 `src/data/fortunes.json` holds four lists:
@@ -47,7 +53,8 @@ src/elements.ts       DOM references shared between modules
 src/particles.ts      crumbs and sparkles canvas
 src/sound.ts          Sound on/off toggle; music starts on the first open
 src/audio/            Web Audio engine, music loop, sound effects
-src/events/           council, call, rage, crush
+src/events/           council, call, rage, crush, abduction, fbi, victorian, slots, golden
+src/debug.ts          ?debug panel (loaded only when asked for)
 src/styles/           CSS, imported in cascade order from main.css
 src/assets/           cookie, chopsticks and cloud tile images
 ```
