@@ -6,3 +6,4 @@ import "./hungry";
 import "./bill";
 import "./crash";
 import "./fly";
+import "./flipside";

@@ -491,7 +491,18 @@ function squish(e: Engine): void {
   noiseHit(e, t + 0.05, { freq: 2400, q: 4, dur: 0.06, vol: 0.3 });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish };
+// a slip of paper flipped over: a quick rising swish
+function swish(e: Engine): void {
+  const { ac, fx, noise } = e;
+  const t = ac.currentTime + 0.01;
+  const src = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain();
+  src.buffer = noise; bp.type = "bandpass"; bp.Q.value = 1.4;
+  bp.frequency.setValueAtTime(900, t); bp.frequency.exponentialRampToValueAtTime(3600, t + 0.28);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + 0.1); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+  src.connect(bp).connect(g).connect(fx); src.start(t, Math.random() * 0.1); src.stop(t + 0.34);
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

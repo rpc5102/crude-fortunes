@@ -36,6 +36,8 @@ export const SPECIAL = {
   crash: /Fortune\.exe has stopped believing in you/,
   /** A fly buzzes around the screen until you swat it. */
   fly: /Something in here smells like you/,
+  /** Tapping flips the slip over. The back is not kind. */
+  flipside: /Your real fortune is written on the back/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */
