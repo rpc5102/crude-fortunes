@@ -1,0 +1,63 @@
+/* ---------- Cookie stage ---------- */
+.stage {
+  position: relative;
+  width: min(58vw, 250px);
+  aspect-ratio: 844 / 794;
+  background: none; border: 0; color: inherit; font: inherit;
+  cursor: pointer;
+  border-radius: 24px;
+  outline: none;
+}
+.retro .bob { rotate: 180deg; }
+.stage { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+.paperball {
+  position: absolute; left: 50%; top: 58%; width: 40%;
+  translate: -50% -50%; opacity: 0; pointer-events: none;
+  filter: drop-shadow(0 8px 8px rgba(60, 0, 8, 0.45));
+}
+.stage:focus-visible { box-shadow: 0 0 0 2px var(--gold-hi), 0 0 0 6px rgba(252, 235, 176, 0.25); }
+
+.glow {
+  position: absolute; left: 12%; right: 12%; bottom: -6%; height: 22%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 214, 120, 0.42), rgba(255, 214, 120, 0));
+  transition: opacity 0.4s;
+}
+.is-open .glow { opacity: 0.35; }
+
+.bob { position: absolute; inset: 0; animation: bob 3.2s ease-in-out infinite; }
+.is-open .bob { animation: none; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+.cookie { position: absolute; inset: 0; }
+.half { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 50% 80%; user-select: none; -webkit-user-drag: none; }
+.half.left { clip-path: polygon(0 0, 49.4% 0, 51.9% 5%, 48.4% 10%, 51.4% 15%, 48.9% 20%, 50.9% 25%, 49.4% 28%, 50.9% 35%, 51.4% 42%, 52.4% 48%, 52.4% 100%, 0 100%); }
+.half.right { clip-path: polygon(100% 0, 49% 0, 51.5% 5%, 48% 10%, 51% 15%, 48.5% 20%, 50.5% 25%, 49% 28%, 50.5% 35%, 51% 42%, 52% 48%, 52% 100%, 100% 100%); }
+
+.sticks {
+  position: absolute; left: 50%; top: 46%;
+  width: 150%; aspect-ratio: 720 / 416;
+  translate: -50% -50%;
+  filter: drop-shadow(0 12px 10px rgba(70, 0, 10, 0.4));
+}
+.sticks[hidden] { display: none; }
+.stick { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 50% 50%; user-select: none; -webkit-user-drag: none; }
+
+.poof {
+  position: absolute; left: 50%; top: 52%; width: 90%; aspect-ratio: 1.4;
+  translate: -50% -50%; border-radius: 50%; pointer-events: none; opacity: 0;
+  background:
+    radial-gradient(circle at 35% 55%, rgba(240, 220, 185, 0.9), rgba(240, 220, 185, 0) 32%),
+    radial-gradient(circle at 62% 45%, rgba(225, 200, 160, 0.85), rgba(225, 200, 160, 0) 34%),
+    radial-gradient(circle at 50% 62%, rgba(250, 235, 210, 0.8), rgba(250, 235, 210, 0) 40%);
+  filter: blur(6px);
+}
+.flash {
+  position: absolute; left: 50%; top: 45%; width: 70%; aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 244, 200, 0.95), rgba(255, 210, 100, 0.45) 45%, rgba(255, 200, 80, 0));
+  opacity: 0; pointer-events: none;
+}
+
+/* Cookie */
+.cookie { filter: drop-shadow(0 14px 12px rgba(70, 0, 10, 0.45)); }

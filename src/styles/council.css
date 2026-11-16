@@ -1,0 +1,13 @@
+/* ---------- Ominous mode (The Council) ---------- */
+.doom {
+  position: fixed; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 45%, rgba(90, 0, 0, 0.35), rgba(10, 0, 0, 0.92) 75%),
+    #050000;
+  opacity: 0; transition: opacity 1.4s ease;
+}
+.ominous .doom { opacity: 0.88; animation: doompulse 3.2s ease-in-out 1.4s infinite; }
+@keyframes doompulse { 50% { opacity: 0.97; } }
+.frame, .seal, .wordmark, .hint, .controls { transition: filter 1.4s ease, opacity 1.4s ease; }
+.ominous .frame, .ominous .seal, .ominous .controls { filter: saturate(0.4) brightness(0.55); }
+.ominous .wordmark, .ominous .hint { color: #E2483E; }

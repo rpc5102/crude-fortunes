@@ -1,0 +1,11 @@
+/* ---------- Drifting clouds ---------- */
+.clouds {
+  position: fixed; top: 0; bottom: 0; left: 0;
+  width: calc(100% + 240px);
+  background-image: url("../assets/clouds.webp");
+  background-size: 240px 130px;
+  pointer-events: none;
+  animation: drift 70s linear infinite;
+  will-change: transform;
+}
+@keyframes drift { to { transform: translateX(-240px); } }
