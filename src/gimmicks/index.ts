@@ -8,3 +8,4 @@ import "./crash";
 import "./fly";
 import "./flipside";
 import "./typing";
+import "./selfdestruct";

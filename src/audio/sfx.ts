@@ -509,7 +509,21 @@ function pop(e: Engine): void {
   tone(e, t + 0.01, { f0: 1800, dur: 0.04, vol: 0.05 });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish, pop };
+// countdown: a short electronic beep (higher for the last one)
+function beep(e: Engine): void { tone(e, e.ac.currentTime + 0.005, { f0: 1100, dur: 0.09, vol: 0.16, type: "square" }); }
+function beepLast(e: Engine): void { tone(e, e.ac.currentTime + 0.005, { f0: 1650, dur: 0.22, vol: 0.18, type: "square" }); }
+
+// the explosion: a sub drop, a long low roar of noise, and crackle
+function boom(e: Engine): void {
+  const { ac } = e;
+  const t = ac.currentTime + 0.005;
+  tone(e, t, { f0: 90, f1: 28, dur: 1.1, vol: 0.9 });
+  noiseHit(e, t, { freq: 600, q: 0.6, dur: 0.5, vol: 1, type: "lowpass" });
+  noiseHit(e, t + 0.05, { freq: 250, q: 0.7, dur: 0.45, vol: 0.8, type: "lowpass" });
+  for (let i = 0; i < 10; i++) noiseHit(e, t + 0.08 + Math.random() * 0.9, { freq: 1800 + Math.random() * 3000, q: 3, dur: 0.02, vol: 0.25 + Math.random() * 0.2 });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish, pop, beep, beepLast, boom };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

@@ -40,6 +40,8 @@ export const SPECIAL = {
   flipside: /Your real fortune is written on the back/,
   /** A typing bubble comes and goes under the slip, then: Seen. */
   typing: /Your crush is typing/,
+  /** A countdown on the slip, then it blows up and burns to ash. */
+  selfDestruct: /will self-destruct in 5 seconds/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

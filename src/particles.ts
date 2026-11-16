@@ -28,11 +28,12 @@ export function initParticles(): void {
 
 const crumbCols = ["#F2C27A", "#E9A44F", "#D88A35", "#B9722A", "#F7D9A4"];
 
-export function burst(x: number, y: number, crumbs = true, sparks = true, n = 30): void {
+/** Crumbs (in `palette`, cookie colours by default) and/or gold sparkles from a point. */
+export function burst(x: number, y: number, crumbs = true, sparks = true, n = 30, palette: readonly string[] = crumbCols): void {
   for (let i = 0; i < (crumbs ? n : 0); i++) {
     const pts = Array.from({ length: 6 }, () => rand(0.55, 1));
     parts.push({ k: "crumb", x: x + rand(-24, 24), y: y + rand(-8, 18), vx: rand(-2.8, 2.8), vy: rand(-4.5, 0.5),
-      r: rand(1.8, 4.6), rot: rand(0, 6.28), vr: rand(-0.25, 0.25), c: pick(crumbCols), pts, born: performance.now() });
+      r: rand(1.8, 4.6), rot: rand(0, 6.28), vr: rand(-0.25, 0.25), c: pick(palette), pts, born: performance.now() });
   }
   for (let i = 0; i < (sparks ? 26 : 0); i++) {
     const a = rand(0, Math.PI * 2), s = rand(3, 9);

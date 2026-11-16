@@ -28,6 +28,7 @@ const CASES: [label: string, setup: RoundSetup][] = [
   ["Fly", { fortune: findFortune(SPECIAL.fly) }],
   ["Back of the slip", { fortune: findFortune(SPECIAL.flipside) }],
   ["Crush is typing", { fortune: findFortune(SPECIAL.typing) }],
+  ["Self-destruct", { fortune: findFortune(SPECIAL.selfDestruct) }],
   ["Knows the time", { fortune: findFortune(/\{time\}/) }],
   ["Empty cookie", { empty: true }],
   ["Chopsticks", { kind: "sticks" }],
