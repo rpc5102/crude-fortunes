@@ -17,7 +17,10 @@ export function consumeSuppressedClick(): boolean {
 
 export function initCrush(): void {
   stage.addEventListener("contextmenu", (e) => e.preventDefault());
-  stage.addEventListener("pointerdown", () => {
+  stage.addEventListener("pointerdown", (e) => {
+    // A hold released off the cookie gets no click, so its pending suppression must not
+    // swallow this new tap. (Primary pointer only, so a second finger can't clear it mid-hold.)
+    if (e.isPrimary) suppressClick = false;
     if (game.busy || game.state !== "closed" || game.kind !== "cookie") return;
     clearTimeout(holdTimer);
     holdTimer = window.setTimeout(beginCrush, HOLD_DELAY);
