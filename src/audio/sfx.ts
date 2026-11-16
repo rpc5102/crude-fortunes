@@ -573,7 +573,23 @@ function cough(e: Engine): void {
   noiseHit(e, t + 0.2, { freq: 600, q: 1.2, dur: 0.13, vol: 1 });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish, pop, beep, beepLast, boom, kazoo, clack, clap, cough };
+// a phone-style notification: two soft rising notes
+function notify(e: Engine): void {
+  const t = e.ac.currentTime + 0.01;
+  tone(e, t, { f0: 1320, dur: 0.14, vol: 0.12 });
+  tone(e, t + 0.11, { f0: 1760, dur: 0.22, vol: 0.12 });
+}
+
+// one heartbeat: lub-dub (a low thump, plus a muffled thud phone speakers can actually play)
+function heartbeat(e: Engine): void {
+  const t = e.ac.currentTime + 0.01;
+  tone(e, t, { f0: 70, f1: 45, dur: 0.16, vol: 0.85 });
+  noiseHit(e, t, { freq: 280, q: 0.9, dur: 0.09, vol: 0.9, type: "lowpass" });
+  tone(e, t + 0.2, { f0: 60, f1: 40, dur: 0.14, vol: 0.6 });
+  noiseHit(e, t + 0.2, { freq: 240, q: 0.9, dur: 0.07, vol: 0.65, type: "lowpass" });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish, pop, beep, beepLast, boom, kazoo, clack, clap, cough, notify, heartbeat };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

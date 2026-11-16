@@ -46,6 +46,10 @@ export const SPECIAL = {
   trophy: /participation trophy/,
   /** One person slow-claps, alone, then coughs. */
   slowClap: /round of applause for your effort/,
+  /** A notification: unsubscribed from good luck. Its Undo button doesn't. */
+  unsubscribed: /unsubscribed from good luck/,
+  /** The lights go down and something's eyes open in the dark. */
+  behind: /Don't look behind you/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */
