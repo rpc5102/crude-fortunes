@@ -1,0 +1,22 @@
+/* ---------- Rubber stamp (DENIED / REJECTED / IGNORED) ---------- */
+.slip-paper { position: relative; }
+.stamp {
+  position: absolute; left: 50%; top: 46%; translate: -50% -50%; rotate: -13deg;
+  padding: 3px 10px 2px calc(10px + 0.14em);
+  border: 3px solid currentColor; border-radius: 7px;
+  outline: 1.5px solid currentColor; outline-offset: 2px;
+  color: rgba(200, 16, 34, 0.86);
+  font: 600 30px/1.05 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap;
+  mix-blend-mode: multiply;   /* inked onto the paper */
+  pointer-events: none;
+}
+.stamp[hidden] { display: none; }
+/* gaps where the ink didn't take */
+.stamp::after {
+  content: ""; position: absolute; inset: -6px;
+  background:
+    radial-gradient(circle at 12% 30%, var(--paper) 0 1.2px, transparent 1.6px) 0 0 / 9px 11px,
+    radial-gradient(circle at 60% 70%, var(--paper) 0 1px, transparent 1.4px) 0 0 / 13px 7px,
+    radial-gradient(circle at 40% 50%, rgba(251, 247, 236, 0.7) 0 1.6px, transparent 2px) 0 0 / 17px 15px;
+  opacity: 0.85;
+}

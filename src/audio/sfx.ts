@@ -313,7 +313,16 @@ function choir(e: Engine): void {
   duckFor(e, t, len);
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir };
+// a rubber stamp slammed down: a body thump, the rubber slap, a rattle of the desk
+function stamp(e: Engine): void {
+  const t = e.ac.currentTime + 0.005;
+  tone(e, t, { f0: 120, f1: 45, dur: 0.2, vol: 0.75 });
+  noiseHit(e, t, { freq: 900, q: 0.7, dur: 0.09, vol: 1, type: "lowpass" });
+  noiseHit(e, t + 0.004, { freq: 3200, q: 1.2, dur: 0.03, vol: 0.55 });
+  noiseHit(e, t + 0.06, { freq: 1600, q: 3, dur: 0.05, vol: 0.2 });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

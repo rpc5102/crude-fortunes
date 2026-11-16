@@ -22,6 +22,8 @@ export const SPECIAL = {
   fbi: /The FBI is watching/,
   /** Sepia, film grain and a music-box version of the tune. */
   victorian: /Victorian child/,
+  /** A red DENIED / REJECTED / IGNORED rubber stamp slams onto the slip. */
+  stamped: /(has|have) been (reviewed|processed|forwarded)/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */
