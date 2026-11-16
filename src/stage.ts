@@ -7,7 +7,7 @@ import { endCouncil, startCouncilIfDue } from "./events/council";
 import { scheduleCall } from "./events/call";
 import { clearCrush, consumeSuppressedClick } from "./events/crush";
 import { draw, luckyNumbers, type Mode } from "./fortunes";
-import { game } from "./game";
+import { game, type Kind } from "./game";
 import { $, anim, ease, reducedMotion } from "./lib/dom";
 import { random } from "./lib/random";
 import { store } from "./lib/storage";
@@ -15,9 +15,14 @@ import { burst } from "./particles";
 import { sound, startMusicOnce } from "./sound";
 import { CALL, SPECIAL } from "./specials";
 
+/** A forced round set up from the debug panel; consumed by the next pickKind/loadFortune. */
+export interface RoundSetup { kind?: Kind; empty?: boolean; fortune?: string }
+let setup: RoundSetup | null = null;
+
 /** Per-round roll: 1 in 10 chopsticks, otherwise 1 in 25 empty cookie. */
 export function pickKind(): void {
-  if (game.forceCall) { game.kind = "cookie"; game.empty = false; }
+  if (setup) { game.kind = setup.kind ?? "cookie"; game.empty = setup.empty ?? false; }
+  else if (game.forceCall) { game.kind = "cookie"; game.empty = false; }
   else {
     game.kind = random() < 0.1 ? "sticks" : "cookie";
     game.empty = game.kind === "cookie" && random() < 1 / 25;   // 1 in 25 cookies has no fortune
@@ -35,8 +40,9 @@ function showKind(): void {
 export function loadFortune(): void {
   luckyEl.querySelectorAll("span").forEach((s) => s.remove());
   stage.classList.remove("retro");
+  const forced = setup?.fortune; setup = null;
   if (game.empty) { fortuneEl.textContent = ""; return; }
-  fortuneEl.textContent = game.forceCall ? CALL : draw(game.kind === "sticks" ? "sticks" : game.mode);
+  fortuneEl.textContent = forced ?? (game.forceCall ? CALL : draw(game.kind === "sticks" ? "sticks" : game.mode));
   // Mercury in retrograde: the cookie shows up upside down
   if (SPECIAL.retrograde.test(fortuneText())) stage.classList.add("retro");
   const t = fortuneText();
@@ -130,6 +136,20 @@ async function newCookie(): Promise<void> {
   ], { duration: reduced ? 200 : 460, easing: "cubic-bezier(.3,.7,.4,1.2)", fill: "none" });
   showKind();   // restore the closed-state label and hint
   game.state = "closed";
+}
+
+/**
+ * Debug: make the next round `s`. A closed cookie is swapped in place, an open one is
+ * replaced by a fresh round; mid-transition, it waits for the next round. Returns true
+ * if it applied now.
+ */
+export async function forceRound(s: RoundSetup): Promise<boolean> {
+  setup = s;
+  if (game.busy) return false;
+  if (game.state === "closed") { pickKind(); loadFortune(); return true; }
+  game.busy = true;
+  try { await newCookie(); } finally { game.busy = false; }
+  return true;
 }
 
 /** Real / Crude toggle, persisted. */

@@ -17,3 +17,6 @@ initStage();
 
 pickKind();
 loadFortune();
+
+// ?debug shows a panel for forcing special rounds (loaded only when asked for)
+if (new URLSearchParams(location.search).has("debug")) void import("./debug");

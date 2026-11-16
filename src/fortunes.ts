@@ -22,6 +22,11 @@ export function draw(list: List): string {
   return bags[list].pop() ?? "";
 }
 
+/** First fortune in any list matching `pattern` (for the debug panel). */
+export function findFortune(pattern: RegExp): string | undefined {
+  return Object.values(FORTUNES).flat().find((f) => pattern.test(f));
+}
+
 /** Six unique numbers from 1 to 99. */
 export function luckyNumbers(count = 6, max = 99): number[] {
   const pool = Array.from({ length: max }, (_, i) => i + 1);

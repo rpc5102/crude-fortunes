@@ -9,7 +9,7 @@ import { isSpecial } from "../specials";
 const rageFlash = $(".rage-flash");
 let taps: number[] = [], rageCooldown = 0;
 
-function rage(): void {
+export function rage(): void {
   rageCooldown = performance.now() + 4000; taps = [];
   // Rage can land before or during an open. A special round keeps its fortune, so its
   // event (Council, call, upside-down Mercury...) isn't cancelled or left half-done.
