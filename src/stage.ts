@@ -5,6 +5,7 @@ import {
 } from "./elements";
 import { abduct, endAbduction } from "./events/abduction";
 import { endCouncil, startCouncilIfDue } from "./events/council";
+import { endSlots, landSlots, startSlotsIfDue } from "./events/slots";
 import { endFbi, startFbiIfDue } from "./events/fbi";
 import { endVictorian, startVictorianIfDue } from "./events/victorian";
 import { scheduleCall } from "./events/call";
@@ -105,6 +106,7 @@ async function openCookie(): Promise<void> {
     ], { duration: reduced ? 1 : 950, easing: ease })
   ]);
   game.slipShown = !game.empty;
+  if (!game.empty) startSlotsIfDue(fortuneText());
   const slipIn = game.empty ? Promise.resolve() : anim(slip, reduced ? [{ opacity: 0 }, { opacity: 1 }] : [
     { opacity: 0, transform: "translateY(18%) scale(0.06, 0.45)" },
     { opacity: 1, transform: "translateY(4%) scale(0.22, 0.7)", offset: 0.3 },
@@ -112,6 +114,7 @@ async function openCookie(): Promise<void> {
     { opacity: 1, transform: "translateY(0) scale(1, 1)" }
   ], { duration: reduced ? 250 : 900, delay: reduced ? 0 : 180, easing: ease });
   await Promise.all([halves, slipIn]);
+  landSlots();
   if (fortuneText() === CALL) { game.forceCall = false; scheduleCall(); }
   if (SPECIAL.missingPerson.test(fortuneText())) game.forceCall = true;
   if (SPECIAL.believe.test(fortuneText()) && sound.on) playSfx("believe");
@@ -124,6 +127,7 @@ async function openCookie(): Promise<void> {
 
 async function newCookie(): Promise<void> {
   const reduced = reducedMotion();
+  endSlots();
   // "I want to believe": the cookie gets abducted instead of fading out
   const abducting = game.slipShown && SPECIAL.believe.test(fortuneText());
   if (abducting) await abduct();

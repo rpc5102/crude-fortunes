@@ -220,7 +220,22 @@ function windup(e: Engine): void {
   for (let i = 0; i < 10; i++) noiseHit(e, t + i * 0.075 + Math.random() * 0.01, { freq: 3800 + Math.random() * 800, q: 6, dur: 0.025, vol: 0.5 });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup };
+// slot machine: reel tick, a reel stopping, and the losing jingle
+function tick(e: Engine): void {
+  noiseHit(e, e.ac.currentTime + 0.005, { freq: 5200, q: 4, dur: 0.012, vol: 0.18 });
+}
+function clunk(e: Engine): void {
+  const t = e.ac.currentTime + 0.005;
+  tone(e, t, { f0: 210, f1: 120, dur: 0.09, vol: 0.32 });
+  noiseHit(e, t, { freq: 1800, q: 1.5, dur: 0.03, vol: 0.4 });
+}
+function slotLose(e: Engine): void {
+  const t = e.ac.currentTime + 0.02;
+  [[784, 0], [659, 0.16], [523, 0.32], [392, 0.48]].forEach(([f, dt]) =>
+    tone(e, t + dt!, { f0: f!, f1: f! * 0.97, dur: dt === 0.48 ? 0.5 : 0.15, vol: 0.12, type: "triangle" }));
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, tick, clunk, slotLose };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {
