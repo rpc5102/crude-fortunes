@@ -589,7 +589,28 @@ function heartbeat(e: Engine): void {
   noiseHit(e, t + 0.2, { freq: 240, q: 0.9, dur: 0.07, vol: 0.65, type: "lowpass" });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish, pop, beep, beepLast, boom, kazoo, clack, clap, cough, notify, heartbeat };
+// a slide whistle going up, wobbling, with a little breath
+function slideWhistle(e: Engine): void {
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.02, dur = 1.4;
+  const o = ac.createOscillator(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+  o.type = "sine"; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(1750, t + dur);
+  lfo.frequency.value = 7; lg.gain.value = 18; lfo.connect(lg).connect(o.frequency);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.24, t + 0.08);
+  g.gain.setValueAtTime(0.24, t + dur - 0.15); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(fx);
+  [o, lfo].forEach((n) => { n.start(t); n.stop(t + dur + 0.02); });
+  noiseHit(e, t, { freq: 2500, q: 2, dur: 0.5, vol: 0.06 });
+}
+
+// yoink! (and an indignant raccoon chitter)
+function yoink(e: Engine): void {
+  const t = e.ac.currentTime + 0.005;
+  tone(e, t, { f0: 300, f1: 1900, dur: 0.16, vol: 0.22, type: "triangle" });
+  for (let i = 0; i < 4; i++) noiseHit(e, t + 0.18 + i * 0.055, { freq: 4200 + Math.random() * 1800, q: 8, dur: 0.025, vol: 0.35 });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish, pop, beep, beepLast, boom, kazoo, clack, clap, cough, notify, heartbeat, slideWhistle, yoink };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

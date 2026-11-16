@@ -13,3 +13,6 @@ import "./trophy";
 import "./slowclap";
 import "./unsubscribe";
 import "./behind";
+import "./loading";
+import "./gravity";
+import "./snatch";

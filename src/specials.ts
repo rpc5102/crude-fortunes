@@ -50,6 +50,12 @@ export const SPECIAL = {
   unsubscribed: /unsubscribed from good luck/,
   /** The lights go down and something's eyes open in the dark. */
   behind: /Don't look behind you/,
+  /** A progress bar crawls to 99%, stalls, and fails: personality not found. */
+  loading: /Your personality is loading/,
+  /** Everything floats up and away to a slide whistle. */
+  gravity: /Gravity has given up on you/,
+  /** A raccoon paw darts in and yanks the slip away. */
+  snatch: /Hold on to this one/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */
