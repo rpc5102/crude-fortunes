@@ -5,6 +5,7 @@ import { game } from "../game";
 import { anim, reducedMotion } from "../lib/dom";
 import { burst } from "../particles";
 import { sound, startMusicOnce } from "../sound";
+import { tally } from "../stats";
 
 const HOLD_DELAY = 280, CRUSH_TIME = 1700;
 let holdTimer = 0, crushing = false, crushStart = 0, crushRaf = 0, lastCrumb = 0, lastCrunch = 0, suppressClick = false;
@@ -68,6 +69,7 @@ function releaseCrush(): void {
 async function finishCrush(): Promise<void> {
   const reduced = reducedMotion();
   crushing = false;
+  tally("crushes");
   if (!reduced) {
     const r = stage.getBoundingClientRect();
     burst(r.left + r.width / 2, r.top + r.height * 0.7, true, false, 45);

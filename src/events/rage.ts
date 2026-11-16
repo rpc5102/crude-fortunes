@@ -6,12 +6,14 @@ import { game } from "../game";
 import { $, reducedMotion, vibrate } from "../lib/dom";
 import { sound } from "../sound";
 import { isSpecial } from "../specials";
+import { tally } from "../stats";
 
 const rageFlash = $(".rage-flash");
 let taps: number[] = [], rageCooldown = 0;
 
 export function rage(): void {
   rageCooldown = performance.now() + 4000; taps = [];
+  tally("rages");
   // Rage can land before or during an open. A special round keeps its fortune, so its
   // event (Council, call, upside-down Mercury...) isn't cancelled or left half-done. A golden
   // cookie keeps its 7s too.

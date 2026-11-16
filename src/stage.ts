@@ -12,12 +12,14 @@ import { endVictorian, startVictorianIfDue } from "./events/victorian";
 import { scheduleCall } from "./events/call";
 import { clearCrush, consumeSuppressedClick } from "./events/crush";
 import { draw, drawPlain, luckyNumbers, type Mode } from "./fortunes";
+import { endGimmicks, landGimmicks, loadGimmicks, tapGimmick } from "./gimmicks/registry";
 import { game, type Kind } from "./game";
 import { $, anim, ease, reducedMotion } from "./lib/dom";
 import { random } from "./lib/random";
 import { store } from "./lib/storage";
 import { burst } from "./particles";
 import { sound, startMusicOnce } from "./sound";
+import { fillTemplate, tally } from "./stats";
 import { CALL, SPECIAL } from "./specials";
 
 /** A forced round set up from the debug panel; consumed by the next pickKind/loadFortune. */
@@ -47,10 +49,11 @@ function showKind(): void {
 export function loadFortune(): void {
   luckyEl.querySelectorAll("span").forEach((s) => s.remove());
   stage.classList.remove("retro");
+  endGimmicks();
   const forced = setup?.fortune; setup = null;
   if (game.empty) { fortuneEl.textContent = ""; return; }
   const list = game.kind === "sticks" ? "sticks" : game.mode;
-  fortuneEl.textContent = forced ?? (game.forceCall ? CALL : game.golden ? drawPlain(list) : draw(list));
+  fortuneEl.textContent = fillTemplate(forced ?? (game.forceCall ? CALL : game.golden ? drawPlain(list) : draw(list)));
   // Mercury in retrograde: the cookie shows up upside down
   if (SPECIAL.retrograde.test(fortuneText())) stage.classList.add("retro");
   const t = fortuneText();
@@ -63,11 +66,14 @@ export function loadFortune(): void {
     s.textContent = n + (i < all.length - 1 ? "," : "");
     luckyEl.append(s);
   });
+  loadGimmicks(fortuneText());
 }
 
 async function openCookie(): Promise<void> {
   const reduced = reducedMotion();
   startMusicOnce();
+  tally("cookies");
+  if (game.golden) tally("goldens");
   if (!reduced) {
     await anim(game.kind === "sticks" ? sticks : cookie, [
       { transform: "rotate(0)" }, { transform: "rotate(-4deg) scale(1.02)" }, { transform: "rotate(4deg) scale(1.03)" },
@@ -130,6 +136,7 @@ async function openCookie(): Promise<void> {
   stage.setAttribute("aria-label", "Get another fortune cookie");
   hint.textContent = game.empty ? "Empty. Tap for another one" : "Tap for another one";
   game.state = "open";
+  landGimmicks(fortuneText());
 }
 
 async function newCookie(): Promise<void> {
@@ -146,7 +153,7 @@ async function newCookie(): Promise<void> {
   // forwards-filled animations from the last round would otherwise stick
   [halfL, halfR, stickU, stickL, slip].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
   slip.style.opacity = "0";
-  endCouncil(); endFbi(); endVictorian();
+  endCouncil(); endFbi(); endVictorian(); endGimmicks();
   stage.classList.remove("is-open");
   pickKind();
   loadFortune();
@@ -188,7 +195,9 @@ export function initStage(): void {
     if (game.busy) return;
     game.busy = true;
     try {
-      if (game.state === "closed") await openCookie(); else await newCookie();
+      // a gimmick may swallow the tap (a cookie that dodges, a finger to pull...)
+      if (game.state === "closed") { if (!tapGimmick("closed")) await openCookie(); }
+      else if (!tapGimmick("open")) await newCookie();
     } finally {
       game.busy = false;
     }
