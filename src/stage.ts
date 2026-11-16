@@ -8,7 +8,7 @@ import { scheduleCall } from "./events/call";
 import { clearCrush, consumeSuppressedClick } from "./events/crush";
 import { draw, luckyNumbers, type Mode } from "./fortunes";
 import { game } from "./game";
-import { $, anim, ease, reduced } from "./lib/dom";
+import { $, anim, ease, reducedMotion } from "./lib/dom";
 import { random } from "./lib/random";
 import { store } from "./lib/storage";
 import { burst } from "./particles";
@@ -51,6 +51,7 @@ export function loadFortune(): void {
 }
 
 async function openCookie(): Promise<void> {
+  const reduced = reducedMotion();
   startMusicOnce();
   if (!reduced) {
     await anim(game.kind === "sticks" ? sticks : cookie, [
@@ -110,6 +111,7 @@ async function openCookie(): Promise<void> {
 }
 
 async function newCookie(): Promise<void> {
+  const reduced = reducedMotion();
   await Promise.all([
     game.slipShown ? anim(slip, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-30%) scale(0.92)" }], { duration: 320, easing: "ease-in" }) : null,
     ...[halfL, halfR, stickU, stickL].map((el) => anim(el, [{ opacity: 1 }, { opacity: 0 }], { duration: 280 }))
