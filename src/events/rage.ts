@@ -2,6 +2,7 @@
 import { playSfx } from "../audio/sfx";
 import { fortuneEl, fortuneText, luckyEl, page, stage } from "../elements";
 import { draw } from "../fortunes";
+import { game } from "../game";
 import { $, reducedMotion, vibrate } from "../lib/dom";
 import { sound } from "../sound";
 import { isSpecial } from "../specials";
@@ -12,8 +13,9 @@ let taps: number[] = [], rageCooldown = 0;
 export function rage(): void {
   rageCooldown = performance.now() + 4000; taps = [];
   // Rage can land before or during an open. A special round keeps its fortune, so its
-  // event (Council, call, upside-down Mercury...) isn't cancelled or left half-done.
-  if (!isSpecial(fortuneText())) {
+  // event (Council, call, upside-down Mercury...) isn't cancelled or left half-done. A golden
+  // cookie keeps its 7s too.
+  if (!isSpecial(fortuneText()) && !game.golden) {
     fortuneEl.textContent = draw("rage");
     luckyEl.querySelectorAll("span").forEach((s, i, all) => (s.textContent = "0" + (i < all.length - 1 ? "," : "")));
   }

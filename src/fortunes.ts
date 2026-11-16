@@ -1,6 +1,6 @@
 import data from "./data/fortunes.json";
 import { random } from "./lib/random";
-import { CALL } from "./specials";
+import { CALL, isSpecial } from "./specials";
 
 export type List = keyof typeof data;
 export type Mode = "real" | "crude";
@@ -20,6 +20,16 @@ export function draw(list: List): string {
     bags[list] = bag;
   }
   return bags[list].pop() ?? "";
+}
+
+/** Like draw(), but skips special fortunes (put back for later), for the golden cookie. */
+export function drawPlain(list: List): string {
+  for (let tries = FORTUNES[list].length; tries > 0; tries--) {
+    const f = draw(list);
+    if (!isSpecial(f)) return f;
+    bags[list].unshift(f);
+  }
+  return draw(list);
 }
 
 /** First fortune in any list matching `pattern` (for the debug panel). */

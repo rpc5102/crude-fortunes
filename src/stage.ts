@@ -5,12 +5,13 @@ import {
 } from "./elements";
 import { abduct, endAbduction } from "./events/abduction";
 import { endCouncil, startCouncilIfDue } from "./events/council";
+import { applyGolden } from "./events/golden";
 import { endSlots, landSlots, startSlotsIfDue } from "./events/slots";
 import { endFbi, startFbiIfDue } from "./events/fbi";
 import { endVictorian, startVictorianIfDue } from "./events/victorian";
 import { scheduleCall } from "./events/call";
 import { clearCrush, consumeSuppressedClick } from "./events/crush";
-import { draw, luckyNumbers, type Mode } from "./fortunes";
+import { draw, drawPlain, luckyNumbers, type Mode } from "./fortunes";
 import { game, type Kind } from "./game";
 import { $, anim, ease, reducedMotion } from "./lib/dom";
 import { random } from "./lib/random";
@@ -20,25 +21,27 @@ import { sound, startMusicOnce } from "./sound";
 import { CALL, SPECIAL } from "./specials";
 
 /** A forced round set up from the debug panel; consumed by the next pickKind/loadFortune. */
-export interface RoundSetup { kind?: Kind; empty?: boolean; fortune?: string }
+export interface RoundSetup { kind?: Kind; empty?: boolean; fortune?: string; golden?: boolean }
 let setup: RoundSetup | null = null;
 
 /** Per-round roll: 1 in 10 chopsticks, otherwise 1 in 25 empty cookie. */
 export function pickKind(): void {
-  if (setup) { game.kind = setup.kind ?? "cookie"; game.empty = setup.empty ?? false; }
-  else if (game.forceCall) { game.kind = "cookie"; game.empty = false; }
+  if (setup) { game.kind = setup.kind ?? "cookie"; game.empty = setup.empty ?? false; game.golden = setup.golden ?? false; }
+  else if (game.forceCall) { game.kind = "cookie"; game.empty = false; game.golden = false; }
   else {
     game.kind = random() < 0.1 ? "sticks" : "cookie";
     game.empty = game.kind === "cookie" && random() < 1 / 25;   // 1 in 25 cookies has no fortune
+    game.golden = game.kind === "cookie" && !game.empty && random() < 1 / 100;   // 1 in 100 is golden
   }
+  applyGolden(game.golden);
   showKind();
 }
 
 function showKind(): void {
   cookie.hidden = game.kind !== "cookie";
   sticks.hidden = game.kind !== "sticks";
-  hint.textContent = game.kind === "sticks" ? "Tap the chopsticks" : "Tap the cookie";
-  stage.setAttribute("aria-label", game.kind === "sticks" ? "Split the chopsticks" : "Open the fortune cookie");
+  hint.textContent = game.kind === "sticks" ? "Tap the chopsticks" : game.golden ? "A golden cookie! Tap it" : "Tap the cookie";
+  stage.setAttribute("aria-label", game.kind === "sticks" ? "Split the chopsticks" : game.golden ? "Open the golden fortune cookie" : "Open the fortune cookie");
 }
 
 export function loadFortune(): void {
@@ -46,11 +49,13 @@ export function loadFortune(): void {
   stage.classList.remove("retro");
   const forced = setup?.fortune; setup = null;
   if (game.empty) { fortuneEl.textContent = ""; return; }
-  fortuneEl.textContent = forced ?? (game.forceCall ? CALL : draw(game.kind === "sticks" ? "sticks" : game.mode));
+  const list = game.kind === "sticks" ? "sticks" : game.mode;
+  fortuneEl.textContent = forced ?? (game.forceCall ? CALL : game.golden ? drawPlain(list) : draw(list));
   // Mercury in retrograde: the cookie shows up upside down
   if (SPECIAL.retrograde.test(fortuneText())) stage.classList.add("retro");
   const t = fortuneText();
-  const nums: (number | string)[] = SPECIAL.council.test(t) ? Array<number>(6).fill(6)
+  const nums: (number | string)[] = game.golden ? Array<number>(6).fill(7)
+    : SPECIAL.council.test(t) ? Array<number>(6).fill(6)
     : SPECIAL.noFortune.test(t) ? Array<string>(6).fill("?")
     : luckyNumbers();
   nums.forEach((n, i, all) => {
@@ -76,11 +81,13 @@ async function openCookie(): Promise<void> {
       if (sound.on) { playSfx("crack"); playSfx("womp"); }
     } else {
       burst(bx, by, game.kind !== "sticks");
+      if (game.golden) { burst(bx, by - 10, false, true); burst(bx, by - 20, false, true); }   // a shower of gold
       if (sound.on) { playSfx(game.kind === "sticks" ? "snap" : "crack"); playSfx("sparkle"); }
     }
     flash.animate([{ opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, offset: 0.25 }, { opacity: 0, scale: 1.5 }], { duration: 650, easing: "ease-out" });
   }
   stage.classList.add("is-open");
+  if (game.golden && sound.on) playSfx("choir");
   startCouncilIfDue(fortuneText());
   const halves = game.kind === "sticks" ? Promise.all([
     anim(stickU, [

@@ -1,6 +1,7 @@
 import "./styles/main.css";
 import { initCall } from "./events/call";
 import { initCrush } from "./events/crush";
+import { initGolden } from "./events/golden";
 import { initRage } from "./events/rage";
 import { initParticles } from "./particles";
 import { initSoundToggle } from "./sound";
@@ -14,6 +15,7 @@ initCall();
 initRage();
 initCrush();
 initStage();
+initGolden();
 
 pickKind();
 loadFortune();

@@ -286,7 +286,34 @@ export function startReelSound(reelCount: number): ReelSound | null {
   };
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose };
+// golden cookie: a heavenly "aah" choir chord (C major, detuned voices through vowel formants)
+function choir(e: Engine): void {
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.03, len = 3.4;
+  const voices = ac.createGain(), f1 = ac.createBiquadFilter(), f2 = ac.createBiquadFilter(), body = ac.createBiquadFilter(), env = ac.createGain();
+  f1.type = "bandpass"; f1.frequency.value = 800; f1.Q.value = 4;     // "ah" formants
+  f2.type = "bandpass"; f2.frequency.value = 1150; f2.Q.value = 5;
+  body.type = "lowpass"; body.frequency.value = 1400;
+  const bodyGain = ac.createGain(); bodyGain.gain.value = 0.25;
+  voices.connect(f1).connect(env); voices.connect(f2).connect(env); voices.connect(body).connect(bodyGain).connect(env);
+  env.gain.setValueAtTime(0.0001, t); env.gain.exponentialRampToValueAtTime(2, t + 0.45);
+  env.gain.setValueAtTime(2, t + len - 1.3); env.gain.exponentialRampToValueAtTime(0.0001, t + len);
+  env.connect(fx);
+  [48, 60, 64, 67, 72, 76].forEach((m, i) => {
+    const f = 440 * Math.pow(2, (m - 69) / 12);
+    [-9, 0, 8].forEach((cents, j) => {
+      const o = ac.createOscillator(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+      o.type = "sawtooth"; o.frequency.value = f; o.detune.value = cents;
+      lfo.frequency.value = 4.7 + 0.13 * (i * 3 + j) % 0.9; lg.gain.value = f * 0.006; lfo.connect(lg).connect(o.frequency);
+      g.gain.value = m === 48 ? 0.05 : 0.035;
+      o.connect(g).connect(voices);
+      [o, lfo].forEach((n) => { n.start(t); n.stop(t + len + 0.05); });
+    });
+  });
+  duckFor(e, t, len);
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

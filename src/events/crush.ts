@@ -80,7 +80,7 @@ async function finishCrush(): Promise<void> {
     { opacity: 1, transform: "translateY(-8%) scale(1.1) rotate(8deg)", offset: 0.6 },
     { opacity: 1, transform: "none" }
   ], { duration: 650, delay: 250, easing: "cubic-bezier(.3,.7,.4,1.2)" });
-  hint.textContent = "Fortune ruined. Tap for another one";
+  hint.textContent = game.golden ? "You crushed a golden cookie. Tap for another one" : "Fortune ruined. Tap for another one";
   stage.setAttribute("aria-label", "Get another fortune cookie");
   game.state = "open"; game.busy = false;
 }
