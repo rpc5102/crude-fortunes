@@ -8,7 +8,11 @@
   border-radius: 24px;
   outline: none;
 }
-.retro .bob { rotate: 180deg; }
+/* Mercury in retrograde: flip the cookie upside down. The rotation goes INSIDE the
+   filtered .cookie, never on an ancestor of it: Safari clips a filter under a rotated
+   ancestor to its unrotated box, cutting off the halves as they split apart. */
+.flip { position: absolute; inset: 0; }
+.retro .flip { rotate: 180deg; }
 .stage { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 .paperball {
   position: absolute; left: 50%; top: 58%; width: 40%;
@@ -61,3 +65,5 @@
 
 /* Cookie */
 .cookie { filter: drop-shadow(0 14px 12px rgba(70, 0, 10, 0.45)); }
+/* matches the look from before, when the shadow was flipped along with the cookie */
+.retro .cookie { filter: drop-shadow(0 -14px 12px rgba(70, 0, 10, 0.45)); }
