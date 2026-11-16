@@ -53,6 +53,7 @@ function frame(now: number): void {
   const dx = nx - x, dy = ny - y;
   place(nx, ny, (Math.atan2(dy, dx) * 180) / Math.PI + 90);
   x = nx; y = ny;
+  if (buzz && !sound.on) { buzz.stop(); buzz = null; }   // sound switched off mid-buzz
   if (buzz && Math.round(t * 60) % 3 === 0) buzz.move((x / W) * 2 - 1, Math.min(1, Math.hypot(dx, dy) / 8));
   raf = requestAnimationFrame(frame);
 }

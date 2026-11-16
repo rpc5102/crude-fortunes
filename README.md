@@ -23,6 +23,11 @@ Built with Vite and vanilla TypeScript. Music and sound effects are synthesized 
   - **The fly**: buzzes around the screen until you swat it (swats count on the bill)
   - **Back of the slip**: tapping flips the slip over; the back is not kind
   - **Left on read**: a typing bubble comes and goes under the slip, then "Seen"
+  - **Self-destruct**: a countdown beeps down on the slip, then it blows up and burns to ash
+  - **Participation trophy**: a cheap trophy drops in to a sad kazoo fanfare; its handle falls off
+  - **Slow clap**: one person claps, slowly, alone, then coughs
+  - **Unsubscribed from good luck**: a notification whose Undo button doesn't
+  - **Don't look behind you**: the lights go down, a heartbeat quickens, eyes open in the dark
 - Background music and sound effects with a Sound on/off toggle
 
 ## Develop
@@ -35,7 +40,7 @@ npm run preview    # serve the production build
 
 ## Debug mode
 Add `?debug` to the URL (works on the deployed site too, e.g. on a phone). A **Debug** button appears top right; pick a case and tap the cookie to play it:
-The Council, Mercury retrograde, No fortune, Missing person (then tap again for the call), The call, I want to believe, FBI watching, Victorian child, Golden cookie, every mean gimmick (stamp, finger, dodging, hungry, bill, a fortune that knows the time, crash, fly, back of the slip, typing), Empty cookie, Chopsticks, and Rage now.
+The Council, Mercury retrograde, No fortune, Missing person (then tap again for the call), The call, I want to believe, FBI watching, Victorian child, Golden cookie, every mean gimmick (stamp, finger, dodging, hungry, bill, a fortune that knows the time, crash, fly, back of the slip, typing, self-destruct, trophy, slow clap, unsubscribed, behind you), Empty cookie, Chopsticks, and Rage now.
 Hold-to-crush needs no setup: hold any cookie.
 
 ## Editing fortunes
