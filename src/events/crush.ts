@@ -37,10 +37,16 @@ function beginCrush(): void {
 
 function crushFrame(now: number): void {
   const p = Math.min(1, (now - crushStart) / CRUSH_TIME), e = p * p;
-  const j = 1.5 + 6 * p;
-  cookie.style.transform = `translate(${(Math.random() - 0.5) * j}px, ${(Math.random() - 0.5) * j + e * 18}px) scale(${1 + 0.18 * e}, ${1 - 0.55 * e})`;
-  const r = stage.getBoundingClientRect();
-  if (now - lastCrumb > 90 - 50 * p) { lastCrumb = now; burst(r.left + r.width * (0.3 + Math.random() * 0.4), r.top + r.height * (0.55 + 0.15 * e), true, false, 2 + Math.round(4 * p)); }
+  if (reducedMotion()) {
+    // no trembling or crumbs: the cookie just dims as it is crushed
+    cookie.style.transform = "";
+    cookie.style.opacity = String(1 - 0.5 * e);
+  } else {
+    const j = 1.5 + 6 * p;
+    cookie.style.transform = `translate(${(Math.random() - 0.5) * j}px, ${(Math.random() - 0.5) * j + e * 18}px) scale(${1 + 0.18 * e}, ${1 - 0.55 * e})`;
+    const r = stage.getBoundingClientRect();
+    if (now - lastCrumb > 90 - 50 * p) { lastCrumb = now; burst(r.left + r.width * (0.3 + Math.random() * 0.4), r.top + r.height * (0.55 + 0.15 * e), true, false, 2 + Math.round(4 * p)); }
+  }
   if (sound.on && now - lastCrunch > 170 - 90 * p) { lastCrunch = now; playSfx("crunch"); }
   if (p >= 1) { void finishCrush(); return; }
   crushRaf = requestAnimationFrame(crushFrame);
@@ -49,17 +55,20 @@ function crushFrame(now: number): void {
 /** Let go early: the cookie springs back. */
 function releaseCrush(): void {
   cancelAnimationFrame(crushRaf); crushing = false;
-  const from = cookie.style.transform;
-  cookie.style.transform = "";
-  cookie.animate([{ transform: from }, { transform: "scale(1.04, 0.96)", offset: 0.6 }, { transform: "none" }], { duration: 380, easing: "cubic-bezier(.3,.7,.4,1.3)" });
+  const from = cookie.style.transform, dimmed = cookie.style.opacity;
+  cookie.style.transform = ""; cookie.style.opacity = "";
+  if (reducedMotion()) cookie.animate([{ opacity: dimmed || 1 }, { opacity: 1 }], { duration: 200 });
+  else cookie.animate([{ transform: from }, { transform: "scale(1.04, 0.96)", offset: 0.6 }, { transform: "none" }], { duration: 380, easing: "cubic-bezier(.3,.7,.4,1.3)" });
   game.busy = false;
 }
 
 async function finishCrush(): Promise<void> {
   const reduced = reducedMotion();
   crushing = false;
-  const r = stage.getBoundingClientRect();
-  burst(r.left + r.width / 2, r.top + r.height * 0.7, true, false, 45);
+  if (!reduced) {
+    const r = stage.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height * 0.7, true, false, 45);
+  }
   if (sound.on) { playSfx("crack"); setTimeout(() => playSfx("crumple"), 350); }
   cookie.style.opacity = "0";
   game.crushed = true; game.slipShown = false; stage.classList.add("is-open");

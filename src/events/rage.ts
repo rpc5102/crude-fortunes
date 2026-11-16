@@ -2,7 +2,7 @@
 import { playSfx } from "../audio/sfx";
 import { fortuneEl, luckyEl, page, stage } from "../elements";
 import { draw } from "../fortunes";
-import { $, vibrate } from "../lib/dom";
+import { $, reducedMotion, vibrate } from "../lib/dom";
 import { sound } from "../sound";
 
 const rageFlash = $(".rage-flash");
@@ -12,7 +12,7 @@ function rage(): void {
   rageCooldown = performance.now() + 4000; taps = [];
   fortuneEl.textContent = draw("rage");
   luckyEl.querySelectorAll("span").forEach((s, i, all) => (s.textContent = "0" + (i < all.length - 1 ? "," : "")));
-  page.classList.remove("raging"); void page.offsetWidth; page.classList.add("raging");
+  if (!reducedMotion()) { page.classList.remove("raging"); void page.offsetWidth; page.classList.add("raging"); }   // the red flash is a fade, so it stays
   rageFlash.animate([{ opacity: 0 }, { opacity: 1, offset: 0.2 }, { opacity: 0 }], { duration: 600, easing: "ease-out" });
   if (sound.on) playSfx("buzz");
   vibrate(300);
