@@ -185,7 +185,30 @@ function believe(e: Engine): void {
   duckFor(e, t, len);
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe };
+// the "I want to believe" cookie gets abducted: swoop in, tractor beam, zip away (~2.8s)
+function abduct(e: Engine): void {
+  const { ac, fx, noise } = e;
+  const t = ac.currentTime + 0.02;
+  // whoosh as the saucer swoops in
+  const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+  src.buffer = noise; src.loop = true; f.type = "bandpass"; f.Q.value = 2;
+  f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(2400, t + 0.6);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.7);
+  src.connect(f).connect(g).connect(fx); src.start(t); src.stop(t + 0.75);
+  // tractor beam: a pulsing low hum under an erhu sliding up and up
+  const hum = ac.createOscillator(), trem = ac.createGain(), lfo = ac.createOscillator(), depth = ac.createGain(), env = ac.createGain();
+  hum.type = "triangle"; hum.frequency.value = 110;
+  trem.gain.value = 0.7; lfo.frequency.value = 9; depth.gain.value = 0.3; lfo.connect(depth).connect(trem.gain);
+  env.gain.setValueAtTime(0.0001, t + 0.65); env.gain.exponentialRampToValueAtTime(0.12, t + 0.9);
+  env.gain.setValueAtTime(0.12, t + 2.2); env.gain.exponentialRampToValueAtTime(0.0001, t + 2.45);
+  hum.connect(trem).connect(env).connect(fx);
+  [hum, lfo].forEach((n) => { n.start(t + 0.65); n.stop(t + 2.5); });
+  erhu(e, fx, t + 0.8, [[0, 62], [1.5, 86]], 1.65, 0.07);
+  // and it's gone
+  tone(e, t + 2.35, { f0: 500, f1: 2600, dur: 0.3, vol: 0.14 });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

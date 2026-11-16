@@ -3,6 +3,7 @@ import { playSfx } from "./audio/sfx";
 import {
   cookie, flash, fortuneEl, fortuneText, halfL, halfR, hint, luckyEl, poof, slip, stage, stickL, stickU, sticks,
 } from "./elements";
+import { abduct, endAbduction } from "./events/abduction";
 import { endCouncil, startCouncilIfDue } from "./events/council";
 import { scheduleCall } from "./events/call";
 import { clearCrush, consumeSuppressedClick } from "./events/crush";
@@ -119,7 +120,10 @@ async function openCookie(): Promise<void> {
 
 async function newCookie(): Promise<void> {
   const reduced = reducedMotion();
-  await Promise.all([
+  // "I want to believe": the cookie gets abducted instead of fading out
+  const abducting = game.slipShown && SPECIAL.believe.test(fortuneText());
+  if (abducting) await abduct();
+  else await Promise.all([
     game.slipShown ? anim(slip, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-30%) scale(0.92)" }], { duration: 320, easing: "ease-in" }) : null,
     ...[halfL, halfR, stickU, stickL].map((el) => anim(el, [{ opacity: 1 }, { opacity: 0 }], { duration: 280 }))
   ]);
@@ -131,6 +135,7 @@ async function newCookie(): Promise<void> {
   stage.classList.remove("is-open");
   pickKind();
   loadFortune();
+  if (abducting) endAbduction();
   await anim(game.kind === "sticks" ? sticks : cookie, reduced ? [{ opacity: 0 }, { opacity: 1 }] : [
     { transform: "scale(0)", opacity: 0 }, { transform: "scale(1.08)", opacity: 1, offset: 0.7 }, { transform: "scale(1)", opacity: 1 }
   ], { duration: reduced ? 200 : 460, easing: "cubic-bezier(.3,.7,.4,1.2)", fill: "none" });

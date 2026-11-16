@@ -10,7 +10,7 @@ Built with Vite and vanilla TypeScript. Music and sound effects are synthesized 
 - **Empty cookie** (1 in 25): no slip, just a sad poof
 - **Hold to crush**: press and hold to crush the cookie into a ruined paper ball
 - **Rage mode**: tap 6 times fast and the cookie insults your impatience
-- **Special fortunes**: The Council (dark mode, 6 6 6 6 6 6), the call from inside the house (fake incoming call, set up by "missing person"), Mercury in retrograde (upside-down cookie), "no fortune" (? lucky numbers), "I want to believe" (spooky sci-fi jingle)
+- **Special fortunes**: The Council (dark mode, 6 6 6 6 6 6), the call from inside the house (fake incoming call, set up by "missing person"), Mercury in retrograde (upside-down cookie), "no fortune" (? lucky numbers), "I want to believe" (spooky sci-fi jingle, then the cookie gets abducted by a UFO when you tap for the next one)
 - Background music and sound effects with a Sound on/off toggle
 
 ## Develop
