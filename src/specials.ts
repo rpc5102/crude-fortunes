@@ -24,6 +24,8 @@ export const SPECIAL = {
   victorian: /Victorian child/,
   /** A red DENIED / REJECTED / IGNORED rubber stamp slams onto the slip. */
   stamped: /(has|have) been (reviewed|processed|forwarded)/,
+  /** A finger pokes out of the cookie; tapping pulls it. You know what happens. */
+  finger: /^Pull my finger\./,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

@@ -20,6 +20,7 @@ const CASES: [label: string, setup: RoundSetup][] = [
   ["Victorian child", { fortune: findFortune(SPECIAL.victorian) }],
   ["Golden cookie", { golden: true }],
   ["Stamp: DENIED", { fortune: findFortune(SPECIAL.stamped) }],
+  ["Pull my finger", { fortune: findFortune(SPECIAL.finger) }],
   ["Empty cookie", { empty: true }],
   ["Chopsticks", { kind: "sticks" }],
 ];

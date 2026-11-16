@@ -322,7 +322,39 @@ function stamp(e: Engine): void {
   noiseHit(e, t + 0.06, { freq: 1600, q: 3, dur: 0.05, vol: 0.2 });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp };
+// the fart: a lowpassed buzz whose pitch wanders around 90 Hz, chopped ~30 times a second
+// by a flapping valve (this is how it works, sorry), rising at the very end
+function fart(e: Engine): void {
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.02, dur = 1.3;
+  const n = 52, pitch = new Float32Array(n);
+  let f = 95;
+  for (let i = 0; i < n; i++) {
+    f = Math.min(135, Math.max(58, f + (Math.random() - 0.5) * 24));
+    const tail = (i - n * 0.8) / (n * 0.2);
+    pitch[i] = tail > 0 ? f * (1 + tail * 0.7) : f;
+  }
+  const o = ac.createOscillator(), o2 = ac.createOscillator();
+  o.type = "sawtooth"; o2.type = "square";
+  o.frequency.setValueCurveAtTime(pitch, t, dur);
+  o2.frequency.setValueCurveAtTime(pitch.map((v) => v * 1.012), t, dur);
+  const m = Math.round(dur * 62), chop = new Float32Array(m);
+  for (let i = 0; i < m; i++) chop[i] = i % 2 ? 0.2 + Math.random() * 0.25 : 0.75 + Math.random() * 0.25;
+  const flutter = ac.createGain(); flutter.gain.setValueCurveAtTime(chop, t, dur);
+  const lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.Q.value = 3;
+  lp.frequency.setValueAtTime(760, t); lp.frequency.linearRampToValueAtTime(430, t + dur * 0.8); lp.frequency.linearRampToValueAtTime(900, t + dur);
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0.0001, t); env.gain.exponentialRampToValueAtTime(0.6, t + 0.04);
+  env.gain.setValueAtTime(0.6, t + dur * 0.72); env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  const g2 = ac.createGain(); g2.gain.value = 0.35;
+  o.connect(lp); o2.connect(g2).connect(lp);
+  lp.connect(flutter).connect(env).connect(fx);
+  [o, o2].forEach((x) => { x.start(t); x.stop(t + dur + 0.05); });
+  noiseHit(e, t, { freq: 320, q: 0.8, dur: 0.45, vol: 0.3, type: "lowpass" });          // air
+  noiseHit(e, t + dur - 0.12, { freq: 700, q: 1.5, dur: 0.12, vol: 0.35 });               // the final pfft
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {
