@@ -10,7 +10,9 @@ export const ease = "cubic-bezier(.2,.75,.25,1)";
 export const anim = (el: Element, keyframes: Keyframe[], opts: KeyframeAnimationOptions): Promise<Animation> =>
   el.animate(keyframes, { fill: "forwards", ...opts }).finished;
 
-export const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
+/** Live, so it follows the OS setting if it changes while the page is open (as the CSS does). */
+export const reducedMotion = (): boolean => motionQuery.matches;
 
 /** navigator.vibrate is missing on iOS; that is fine. */
 export function vibrate(pattern: number | number[]): void {

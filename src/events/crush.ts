@@ -2,7 +2,7 @@
 import { playSfx } from "../audio/sfx";
 import { cookie, hint, paperball, stage } from "../elements";
 import { game } from "../game";
-import { anim, reduced } from "../lib/dom";
+import { anim, reducedMotion } from "../lib/dom";
 import { burst } from "../particles";
 import { sound, startMusicOnce } from "../sound";
 
@@ -56,6 +56,7 @@ function releaseCrush(): void {
 }
 
 async function finishCrush(): Promise<void> {
+  const reduced = reducedMotion();
   crushing = false;
   const r = stage.getBoundingClientRect();
   burst(r.left + r.width / 2, r.top + r.height * 0.7, true, false, 45);
