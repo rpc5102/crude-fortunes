@@ -30,6 +30,8 @@ export const SPECIAL = {
   untouchable: /didn't want to be touched by you/,
   /** The halves snap shut on the slip, munch it, gulp and burp. */
   hungry: /This cookie is still hungry/,
+  /** A thermal receipt prints out, itemizing your shameful stats. */
+  bill: /Your bill has arrived/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

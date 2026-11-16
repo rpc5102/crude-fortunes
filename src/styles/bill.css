@@ -1,0 +1,22 @@
+/* ---------- "Your bill has arrived." ---------- */
+.receipt-slot {
+  position: fixed; z-index: 8; pointer-events: none;
+  top: calc(env(safe-area-inset-top) + 138px); left: 50%; translate: -50% 0;
+  font: 11px/1.38 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  filter: drop-shadow(0 8px 10px rgba(60, 0, 8, 0.45));
+}
+.receipt-slot[hidden] { display: none; }
+/* the printer's mouth */
+.receipt-slot::before {
+  content: ""; position: absolute; left: -8%; right: -8%; top: -6px; height: 9px; z-index: 1;
+  background: linear-gradient(#3A2A20, #1E140E); border-radius: 5px;
+}
+.receipt {
+  background: #FCFCF6; color: #2A2622; padding: 14px 14px 22px;
+  /* torn zigzag bottom edge */
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 7px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 7px repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 7px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 7px repeat-x;
+}
+.receipt pre { margin: 0; font: inherit; white-space: pre; }

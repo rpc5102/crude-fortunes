@@ -235,6 +235,22 @@ function slotLose(e: Engine): void {
   });
 }
 
+/** A receipt printer: a dot-matrix chatter per line over the paper feed's whirr. */
+export function printerSound(lines: number, step: number): void {
+  const e = ensure();
+  if (!e) return;
+  const { ac, fx, noise } = e;
+  const t = ac.currentTime + 0.02, dur = lines * step;
+  for (let i = 0; i < lines; i++) {
+    for (let k = 0; k < 4; k++) noiseHit(e, t + i * step + k * 0.018, { freq: 2600 + Math.random() * 900, q: 3, dur: 0.012, vol: 0.32 });
+  }
+  const src = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain();
+  src.buffer = noise; src.loop = true; bp.type = "bandpass"; bp.frequency.value = 900; bp.Q.value = 1.5;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07, t + 0.05);
+  g.gain.setValueAtTime(0.07, t + dur); g.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.1);
+  src.connect(bp).connect(g).connect(fx); src.start(t); src.stop(t + dur + 0.15);
+}
+
 /** Controls the slot-machine reel sound started by startReelSound(). */
 export interface ReelSound {
   /** Reel `i` has stopped; `left` reels are still spinning. */

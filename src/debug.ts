@@ -23,6 +23,8 @@ const CASES: [label: string, setup: RoundSetup][] = [
   ["Pull my finger", { fortune: findFortune(SPECIAL.finger) }],
   ["Dodging cookie", { fortune: findFortune(SPECIAL.untouchable) }],
   ["Hungry cookie", { fortune: findFortune(SPECIAL.hungry) }],
+  ["The bill", { fortune: findFortune(SPECIAL.bill) }],
+  ["Knows the time", { fortune: findFortune(/\{time\}/) }],
   ["Empty cookie", { empty: true }],
   ["Chopsticks", { kind: "sticks" }],
 ];

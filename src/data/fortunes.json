@@ -77,7 +77,11 @@
     "Your feelings have been forwarded to the appropriate department.",
     "Pull my finger.",
     "Even this cookie didn't want to be touched by you.",
-    "This cookie is still hungry."
+    "This cookie is still hungry.",
+    "It's {time}. Go to bed, you feral raccoon.",
+    "That's {count} in one sitting. Your doctor has been notified.",
+    "You've wasted {wasted} on this. Your ancestors are watching. They're not impressed.",
+    "Your bill has arrived."
   ],
   "sticks": [
     "Sorry, we're out of cookies. Also, your fly is open.",
