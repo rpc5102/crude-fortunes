@@ -18,6 +18,10 @@ export const SPECIAL = {
   missingPerson: /become a missing person/i,
   /** Plays a spooky sci-fi jingle when the slip lands. */
   believe: /I want to believe/,
+  /** A security-camera REC overlay; the seal grows eyes that follow your finger. */
+  fbi: /The FBI is watching/,
+  /** Sepia, film grain and a music-box version of the tune. */
+  victorian: /Victorian child/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

@@ -16,6 +16,8 @@ const CASES: [label: string, setup: RoundSetup][] = [
   ["Missing person", { fortune: findFortune(SPECIAL.missingPerson) }],
   ["The call", { fortune: CALL }],
   ["I want to believe", { fortune: findFortune(SPECIAL.believe) }],
+  ["FBI watching", { fortune: findFortune(SPECIAL.fbi) }],
+  ["Victorian child", { fortune: findFortune(SPECIAL.victorian) }],
   ["Empty cookie", { empty: true }],
   ["Chopsticks", { kind: "sticks" }],
 ];

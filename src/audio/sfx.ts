@@ -208,7 +208,19 @@ function abduct(e: Engine): void {
   tone(e, t + 2.35, { f0: 500, f1: 2600, dur: 0.3, vol: 0.14 });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct };
+// security camera starts recording: two short beeps
+function rec(e: Engine): void {
+  const t = e.ac.currentTime + 0.02;
+  [0, 0.13].forEach((dt) => tone(e, t + dt, { f0: 1760, dur: 0.08, vol: 0.12 }));
+}
+
+// winding up a music box: a run of ratchet clicks
+function windup(e: Engine): void {
+  const t = e.ac.currentTime + 0.02;
+  for (let i = 0; i < 10; i++) noiseHit(e, t + i * 0.075 + Math.random() * 0.01, { freq: 3800 + Math.random() * 800, q: 6, dur: 0.025, vol: 0.5 });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

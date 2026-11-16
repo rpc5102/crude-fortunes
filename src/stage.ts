@@ -5,6 +5,8 @@ import {
 } from "./elements";
 import { abduct, endAbduction } from "./events/abduction";
 import { endCouncil, startCouncilIfDue } from "./events/council";
+import { endFbi, startFbiIfDue } from "./events/fbi";
+import { endVictorian, startVictorianIfDue } from "./events/victorian";
 import { scheduleCall } from "./events/call";
 import { clearCrush, consumeSuppressedClick } from "./events/crush";
 import { draw, luckyNumbers, type Mode } from "./fortunes";
@@ -113,6 +115,8 @@ async function openCookie(): Promise<void> {
   if (fortuneText() === CALL) { game.forceCall = false; scheduleCall(); }
   if (SPECIAL.missingPerson.test(fortuneText())) game.forceCall = true;
   if (SPECIAL.believe.test(fortuneText()) && sound.on) playSfx("believe");
+  startFbiIfDue(fortuneText());
+  startVictorianIfDue(fortuneText());
   stage.setAttribute("aria-label", "Get another fortune cookie");
   hint.textContent = game.empty ? "Empty. Tap for another one" : "Tap for another one";
   game.state = "open";
@@ -131,7 +135,7 @@ async function newCookie(): Promise<void> {
   // forwards-filled animations from the last round would otherwise stick
   [halfL, halfR, stickU, stickL, slip].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
   slip.style.opacity = "0";
-  endCouncil();
+  endCouncil(); endFbi(); endVictorian();
   stage.classList.remove("is-open");
   pickKind();
   loadFortune();

@@ -24,6 +24,11 @@ const LOOP = 32;
 
 let timer = 0, nextTime = 0, step = 0, playing = false;
 
+export type Voice = "zither" | "musicbox";
+let voice: Voice = "zither";
+/** Switch the instrument the loop is played on; takes effect from the next scheduled note. */
+export function setMusicVoice(v: Voice): void { voice = v; }
+
 function pluck({ ac, master }: Engine, midi: number, t: number, dur: number, vol = 0.22): void {
   const f = hz(midi), long = dur >= 1;
   const g = ac.createGain();
@@ -56,12 +61,28 @@ function bass({ ac, master }: Engine, midi: number, t: number): void {
   o.connect(g).connect(master); o.start(t); o.stop(t + BEAT * 4);
 }
 
+// music box: a bright comb tine with a quick metallic ping, slightly out of tune with age
+function tine({ ac, master }: Engine, midi: number, t: number, vol: number): void {
+  const f = hz(midi) * Math.pow(2, (Math.random() - 0.5) * 14 / 1200);
+  const g = ac.createGain();
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.004);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 1.6);
+  g.connect(master);
+  ([[1, 1, 1.6], [3, 0.06, 0.5], [5.4, 0.3, 0.12]] as const).forEach(([mult, amt, decay]) => {
+    const o = ac.createOscillator(), og = ac.createGain();
+    o.frequency.value = f * mult;
+    og.gain.setValueAtTime(amt, t); og.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+    o.connect(og).connect(g); o.start(t); o.stop(t + 1.65);
+  });
+}
+
 function schedule(): void {
   const e = current()!;
   while (nextTime < e.ac.currentTime + 0.6) {
     const ev = melody[step % melody.length]!;
     const t = nextTime;
-    if ("bass" in ev) bass(e, ev.bass, t); else pluck(e, ev.n, t, ev.d);
+    if (voice === "musicbox") tine(e, "bass" in ev ? ev.bass + 24 : ev.n + 12, t, "bass" in ev ? 0.07 : 0.16);
+    else if ("bass" in ev) bass(e, ev.bass, t); else pluck(e, ev.n, t, ev.d);
     step++;
     const nxt = melody[step % melody.length]!;
     const nAt = nxt.at + (step % melody.length === 0 ? LOOP : 0);
