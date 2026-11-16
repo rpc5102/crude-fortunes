@@ -1,17 +1,22 @@
-/* Rage mode: 6 taps within 2s shakes the screen and swaps in an insult. 4s cooldown. */
+/* Rage mode: 6 taps within 2s shakes the screen and swaps in an insult (except on special rounds). 4s cooldown. */
 import { playSfx } from "../audio/sfx";
-import { fortuneEl, luckyEl, page, stage } from "../elements";
+import { fortuneEl, fortuneText, luckyEl, page, stage } from "../elements";
 import { draw } from "../fortunes";
 import { $, reducedMotion, vibrate } from "../lib/dom";
 import { sound } from "../sound";
+import { isSpecial } from "../specials";
 
 const rageFlash = $(".rage-flash");
 let taps: number[] = [], rageCooldown = 0;
 
 function rage(): void {
   rageCooldown = performance.now() + 4000; taps = [];
-  fortuneEl.textContent = draw("rage");
-  luckyEl.querySelectorAll("span").forEach((s, i, all) => (s.textContent = "0" + (i < all.length - 1 ? "," : "")));
+  // Rage can land before or during an open. A special round keeps its fortune, so its
+  // event (Council, call, upside-down Mercury...) isn't cancelled or left half-done.
+  if (!isSpecial(fortuneText())) {
+    fortuneEl.textContent = draw("rage");
+    luckyEl.querySelectorAll("span").forEach((s, i, all) => (s.textContent = "0" + (i < all.length - 1 ? "," : "")));
+  }
   if (!reducedMotion()) { page.classList.remove("raging"); void page.offsetWidth; page.classList.add("raging"); }   // the red flash is a fade, so it stays
   rageFlash.animate([{ opacity: 0 }, { opacity: 1, offset: 0.2 }, { opacity: 0 }], { duration: 600, easing: "ease-out" });
   if (sound.on) playSfx("buzz");
