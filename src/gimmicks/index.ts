@@ -7,3 +7,4 @@ import "./bill";
 import "./crash";
 import "./fly";
 import "./flipside";
+import "./typing";

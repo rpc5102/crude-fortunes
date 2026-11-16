@@ -27,6 +27,7 @@ const CASES: [label: string, setup: RoundSetup][] = [
   ["Fortune.exe crash", { fortune: findFortune(SPECIAL.crash) }],
   ["Fly", { fortune: findFortune(SPECIAL.fly) }],
   ["Back of the slip", { fortune: findFortune(SPECIAL.flipside) }],
+  ["Crush is typing", { fortune: findFortune(SPECIAL.typing) }],
   ["Knows the time", { fortune: findFortune(/\{time\}/) }],
   ["Empty cookie", { empty: true }],
   ["Chopsticks", { kind: "sticks" }],

@@ -38,6 +38,8 @@ export const SPECIAL = {
   fly: /Something in here smells like you/,
   /** Tapping flips the slip over. The back is not kind. */
   flipside: /Your real fortune is written on the back/,
+  /** A typing bubble comes and goes under the slip, then: Seen. */
+  typing: /Your crush is typing/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

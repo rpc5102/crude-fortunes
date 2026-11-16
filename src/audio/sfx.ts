@@ -502,7 +502,14 @@ function swish(e: Engine): void {
   src.connect(bp).connect(g).connect(fx); src.start(t, Math.random() * 0.1); src.stop(t + 0.34);
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish };
+// a chat bubble popping up
+function pop(e: Engine): void {
+  const t = e.ac.currentTime + 0.005;
+  tone(e, t, { f0: 900, f1: 1500, dur: 0.06, vol: 0.14 });
+  tone(e, t + 0.01, { f0: 1800, dur: 0.04, vol: 0.05 });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish, pop };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {
