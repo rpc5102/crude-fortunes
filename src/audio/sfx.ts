@@ -523,7 +523,57 @@ function boom(e: Engine): void {
   for (let i = 0; i < 10; i++) noiseHit(e, t + 0.08 + Math.random() * 0.9, { freq: 1800 + Math.random() * 3000, q: 3, dur: 0.02, vol: 0.25 + Math.random() * 0.2 });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish, pop, beep, beepLast, boom };
+// a sad kazoo fanfare: buzzy detuned sawtooths through nasal formants, every note scooped
+// up into pitch, the last one going flat and sagging
+function kazoo(e: Engine): void {
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.03;
+  const f1 = ac.createBiquadFilter(), f2 = ac.createBiquadFilter(), hp = ac.createBiquadFilter(), out = ac.createGain();
+  hp.type = "highpass"; hp.frequency.value = 280;
+  f1.type = "peaking"; f1.frequency.value = 1150; f1.Q.value = 2.5; f1.gain.value = 12;
+  f2.type = "peaking"; f2.frequency.value = 2700; f2.Q.value = 3; f2.gain.value = 9;
+  out.gain.value = 0.08;
+  hp.connect(f1).connect(f2).connect(out).connect(fx);
+  const NOTES: [number, number, number][] = [[392, 0, 0.16], [523, 0.18, 0.16], [659, 0.36, 0.16], [784, 0.56, 0.9]];
+  NOTES.forEach(([f, dt, dur], i) => {
+    const last = i === NOTES.length - 1;
+    [-9, 7].forEach((cents) => {
+      const o = ac.createOscillator(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+      o.type = "sawtooth"; o.detune.value = cents;
+      o.frequency.setValueAtTime(f * 0.94, t + dt); o.frequency.exponentialRampToValueAtTime(f, t + dt + 0.05);
+      if (last) o.frequency.exponentialRampToValueAtTime(f * 0.86, t + dt + dur);   // ...and it goes flat
+      lfo.frequency.value = 6; lg.gain.value = last ? f * 0.02 : 0; lfo.connect(lg).connect(o.frequency);
+      g.gain.setValueAtTime(0.0001, t + dt); g.gain.exponentialRampToValueAtTime(1, t + dt + 0.02);
+      g.gain.setValueAtTime(1, t + dt + dur - 0.05); g.gain.exponentialRampToValueAtTime(0.0001, t + dt + dur);
+      o.connect(g).connect(hp);
+      [o, lfo].forEach((n) => { n.start(t + dt); n.stop(t + dt + dur + 0.02); });
+    });
+  });
+}
+
+// a plastic piece snapping off and clattering
+function clack(e: Engine): void {
+  const t = e.ac.currentTime + 0.005;
+  noiseHit(e, t, { freq: 3000, q: 5, dur: 0.03, vol: 0.6 });
+  noiseHit(e, t + 0.11, { freq: 2200, q: 6, dur: 0.025, vol: 0.4 });
+  noiseHit(e, t + 0.19, { freq: 2600, q: 6, dur: 0.02, vol: 0.25 });
+}
+
+// one clap: a cluster of tiny noise spikes, a little body thump
+function clap(e: Engine): void {
+  const t = e.ac.currentTime + 0.005;
+  [0, 0.006, 0.013].forEach((dt, i) => noiseHit(e, t + dt, { freq: 1300, q: 0.9, dur: 0.07 - i * 0.015, vol: 0.9 - i * 0.2 }));
+  tone(e, t, { f0: 180, f1: 120, dur: 0.05, vol: 0.2 });
+}
+
+// an awkward cough
+function cough(e: Engine): void {
+  const t = e.ac.currentTime + 0.01;
+  noiseHit(e, t, { freq: 700, q: 1.2, dur: 0.16, vol: 1.3 });
+  noiseHit(e, t + 0.2, { freq: 600, q: 1.2, dur: 0.13, vol: 1 });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime, squish, swish, pop, beep, beepLast, boom, kazoo, clack, clap, cough };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

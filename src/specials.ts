@@ -42,6 +42,10 @@ export const SPECIAL = {
   typing: /Your crush is typing/,
   /** A countdown on the slip, then it blows up and burns to ash. */
   selfDestruct: /will self-destruct in 5 seconds/,
+  /** A cheap trophy drops in to a sad kazoo fanfare; its handle falls off. */
+  trophy: /participation trophy/,
+  /** One person slow-claps, alone, then coughs. */
+  slowClap: /round of applause for your effort/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

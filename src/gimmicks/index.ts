@@ -9,3 +9,5 @@ import "./fly";
 import "./flipside";
 import "./typing";
 import "./selfdestruct";
+import "./trophy";
+import "./slowclap";

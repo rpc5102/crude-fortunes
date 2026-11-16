@@ -1,0 +1,19 @@
+/* ---------- Participation trophy ---------- */
+.trophy { position: absolute; left: 50%; bottom: -20%; width: 35%; margin-left: -17.5%; z-index: 2; pointer-events: none; }
+.trophy[hidden], .sad-confetti[hidden] { display: none; }
+.trophy svg { display: block; width: 100%; overflow: visible; }
+.trophy-handle { transform-box: fill-box; transform-origin: 0% 50%; }
+.sad-confetti { position: absolute; left: 50%; top: -30%; width: 0; height: 0; z-index: 4; pointer-events: none; }
+.sad-confetti i { position: absolute; width: 7px; height: 11px; border-radius: 1px; opacity: 0; }
+.sad-confetti i:nth-child(1) { left: -40px; background: #6B8FD6; }
+.sad-confetti i:nth-child(2) { left: 6px; background: #E0C24A; }
+.sad-confetti i:nth-child(3) { left: 46px; background: #8FC46B; }
+
+/* ---------- Slow clap ---------- */
+.clap-caption {
+  position: absolute; right: 6%; top: calc(100% + 12px); margin: 0;
+  font: italic 600 15px/1 var(--font-body); color: var(--gold-hi); letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgba(60, 0, 8, 0.9), 0 0 6px rgba(60, 0, 8, 0.6);
+  opacity: 0; pointer-events: none;
+}
+.clap-caption.on { opacity: 1; }
