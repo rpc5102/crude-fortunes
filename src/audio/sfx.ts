@@ -416,7 +416,30 @@ function burp(e: Engine): void {
   o.start(t); o.stop(t + dur + 0.02);
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp };
+// a computer having a breakdown: a square wave jumping between random pitches, cutting in
+// and out, with bursts of filtered noise
+function glitch(e: Engine): void {
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.01, dur = 0.9;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = "square";
+  for (let x = 0; x < dur; x += 0.03) {
+    o.frequency.setValueAtTime(80 + Math.random() * 1800, t + x);
+    g.gain.setValueAtTime(Math.random() < 0.3 ? 0 : 0.1 + Math.random() * 0.08, t + x);
+  }
+  g.gain.setValueAtTime(0, t + dur);
+  o.connect(g).connect(fx); o.start(t); o.stop(t + dur + 0.02);
+  for (let x = 0; x < dur; x += 0.09) noiseHit(e, t + x, { freq: 400 + Math.random() * 5000, q: 6, dur: 0.03, vol: 0.4 });
+}
+
+// a generic error chime: two falling notes
+function errorChime(e: Engine): void {
+  const t = e.ac.currentTime + 0.01;
+  tone(e, t, { f0: 880, dur: 0.18, vol: 0.2, type: "triangle" });
+  tone(e, t + 0.16, { f0: 587, dur: 0.4, vol: 0.2, type: "triangle" });
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose, choir, stamp, fart, raspberry, gulp, burp, glitch, errorChime };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

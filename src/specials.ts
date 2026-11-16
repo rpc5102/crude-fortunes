@@ -32,6 +32,8 @@ export const SPECIAL = {
   hungry: /This cookie is still hungry/,
   /** A thermal receipt prints out, itemizing your shameful stats. */
   bill: /Your bill has arrived/,
+  /** The screen glitches out and a retro error dialog blames you. */
+  crash: /Fortune\.exe has stopped believing in you/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */
