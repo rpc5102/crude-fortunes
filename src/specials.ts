@@ -16,6 +16,8 @@ export const SPECIAL = {
   noFortune: /contain no fortune/,
   /** Forces the next round to be the CALL fortune. */
   missingPerson: /become a missing person/i,
+  /** Plays a spooky sci-fi jingle when the slip lands. */
+  believe: /I want to believe/,
 } as const;
 
 /** True for the call and any fortune that triggers a special event. */

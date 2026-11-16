@@ -105,6 +105,7 @@ async function openCookie(): Promise<void> {
   await Promise.all([halves, slipIn]);
   if (fortuneText() === CALL) { game.forceCall = false; scheduleCall(); }
   if (SPECIAL.missingPerson.test(fortuneText())) game.forceCall = true;
+  if (SPECIAL.believe.test(fortuneText()) && sound.on) playSfx("believe");
   stage.setAttribute("aria-label", "Get another fortune cookie");
   hint.textContent = game.empty ? "Empty. Tap for another one" : "Tap for another one";
   game.state = "open";

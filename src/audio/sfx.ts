@@ -1,6 +1,6 @@
 /* Synthesized sound effects. All go through the fx gain. */
 import { current, ensure, type Engine } from "./engine";
-import { duckForDoom } from "./music";
+import { duckFor } from "./music";
 
 interface NoiseOpts { freq: number; q?: number; dur: number; vol: number; type?: BiquadFilterType }
 function noiseHit({ ac, fx, noise }: Engine, t: number, { freq, q = 1, dur, vol, type = "bandpass" }: NoiseOpts): void {
@@ -68,7 +68,7 @@ function doom(e: Engine): void {
     const o = ac.createOscillator(); o.type = "sawtooth"; o.frequency.value = f;
     o.connect(lp); o.start(t); o.stop(t + len + 0.1);
   });
-  duckForDoom(e, t, len);
+  duckFor(e, t, len);
 }
 
 // slow, wet breathing: filtered noise swelling in and out
@@ -120,7 +120,72 @@ function crumple(e: Engine): void {
   for (let i = 0; i < 9; i++) noiseHit(e, t + i * 0.04 + Math.random() * 0.03, { freq: 3000 + Math.random() * 3000, q: 0.8, dur: 0.05 + Math.random() * 0.05, vol: 0.25 });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple };
+/* ----- "I want to believe": an original eerie sci-fi jingle on Chinese instruments ----- */
+const midiHz = (m: number): number => 440 * Math.pow(2, (m - 69) / 12);
+
+// guzheng-style pluck: bright attack, quick darkening, long ring
+function zither({ ac }: Engine, out: AudioNode, midi: number, t: number, vol: number): void {
+  const f = midiHz(midi), g = ac.createGain(), lp = ac.createBiquadFilter();
+  lp.type = "lowpass"; lp.frequency.setValueAtTime(f * 8, t); lp.frequency.exponentialRampToValueAtTime(f * 2, t + 0.4);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
+  ([[1, "triangle", 1], [2, "sine", 0.3], [3, "sine", 0.1]] as const).forEach(([mult, type, amt]) => {
+    const o = ac.createOscillator(), og = ac.createGain();
+    o.type = type; o.frequency.value = f * mult; og.gain.value = amt;
+    o.connect(og).connect(lp); o.start(t); o.stop(t + 1.5);
+  });
+  lp.connect(g).connect(out);
+}
+
+// small opera gong: inharmonic partials with the classic upward pitch bend
+function gong({ ac }: Engine, out: AudioNode, t: number): void {
+  [[98, 0.5], [145, 0.3], [207, 0.2], [268, 0.12]].forEach(([f, v]) => {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.frequency.setValueAtTime(f!, t); o.frequency.exponentialRampToValueAtTime(f! * 1.09, t + 0.6);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v!, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 3.2);
+    o.connect(g).connect(out); o.start(t); o.stop(t + 3.3);
+  });
+}
+
+// erhu-style bowed line: nasal sawtooth, slow bow attack, vibrato, sliding between notes
+function erhu({ ac }: Engine, out: AudioNode, t: number, path: [number, number][], end: number, vol: number): void {
+  const o = ac.createOscillator(), o2 = ac.createOscillator(), bp = ac.createBiquadFilter(), lp = ac.createBiquadFilter(), g = ac.createGain();
+  o.type = o2.type = "sawtooth"; o2.detune.value = 7;
+  bp.type = "peaking"; bp.frequency.value = 1400; bp.Q.value = 1.2; bp.gain.value = 8;
+  lp.type = "lowpass"; lp.frequency.value = 3200;
+  const [[, m0]] = path as [[number, number]];
+  [o, o2].forEach((osc) => {
+    osc.frequency.setValueAtTime(midiHz(m0), t);
+    path.forEach(([at, m]) => osc.frequency.exponentialRampToValueAtTime(midiHz(m), t + at));
+  });
+  const lfo = ac.createOscillator(), lg = ac.createGain();
+  lfo.frequency.value = 5.6; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(midiHz(m0) * 0.018, t + 0.6);
+  lfo.connect(lg); lg.connect(o.frequency); lg.connect(o2.frequency);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.18);
+  g.gain.setValueAtTime(vol, t + end - 0.6); g.gain.exponentialRampToValueAtTime(0.0001, t + end);
+  o.connect(bp); o2.connect(bp); bp.connect(lp).connect(g).connect(out);
+  [o, o2, lfo].forEach((n) => { n.start(t); n.stop(t + end + 0.05); });
+}
+
+function believe(e: Engine): void {
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.05, len = 6.5;
+  // everything goes through a dark, long echo for that late-night broadcast feel
+  const echo = ac.createDelay(1), fb = ac.createGain(), tone = ac.createBiquadFilter(), send = ac.createGain();
+  echo.delayTime.value = 0.36; fb.gain.value = 0.42; tone.type = "lowpass"; tone.frequency.value = 1800; send.gain.value = 0.5;
+  send.connect(echo).connect(tone).connect(fb).connect(echo); tone.connect(fx);
+  const bus = ac.createGain(); bus.connect(fx); bus.connect(send);
+  gong(e, bus, t);
+  // repeating plucked figure in D minor, fading in then out
+  const fig = [62, 69, 65, 69];
+  for (let i = 0; i < 16; i++) zither(e, bus, fig[i % 4]!, t + 0.25 + i * 0.21, 0.07 + 0.05 * Math.sin((i / 15) * Math.PI));
+  // the bowed line: up a fourth, climb to D, sink through a chromatic neighbour, slide away
+  erhu(e, bus, t + 0.9, [[0, 67], [0.16, 69], [0.7, 69], [0.86, 74], [1.6, 74], [1.74, 72], [2.05, 69], [2.3, 68], [3.0, 68], [3.5, 64]], 3.9, 0.13);
+  duckFor(e, t, len);
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {

@@ -103,8 +103,8 @@ export function duckMusic(on: boolean): void {
   master.gain.setTargetAtTime(on ? 0.05 : 0.55, ac.currentTime, on ? 0.2 : 1);
 }
 
-/** Duck the music under the Council's drone for `len` seconds from `t`. */
-export function duckForDoom({ master }: Engine, t: number, len: number): void {
+/** Duck the music under an effect (the Council's drone, the believe jingle) for `len` seconds from `t`. */
+export function duckFor({ master }: Engine, t: number, len: number): void {
   if (!playing) return;
   master.gain.cancelScheduledValues(t);
   master.gain.setTargetAtTime(0.04, t, 0.3);
