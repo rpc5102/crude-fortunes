@@ -220,22 +220,73 @@ function windup(e: Engine): void {
   for (let i = 0; i < 10; i++) noiseHit(e, t + i * 0.075 + Math.random() * 0.01, { freq: 3800 + Math.random() * 800, q: 6, dur: 0.025, vol: 0.5 });
 }
 
-// slot machine: reel tick, a reel stopping, and the losing jingle
-function tick(e: Engine): void {
-  noiseHit(e, e.ac.currentTime + 0.005, { freq: 5200, q: 4, dur: 0.012, vol: 0.18 });
-}
-function clunk(e: Engine): void {
-  const t = e.ac.currentTime + 0.005;
-  tone(e, t, { f0: 210, f1: 120, dur: 0.09, vol: 0.32 });
-  noiseHit(e, t, { freq: 1800, q: 1.5, dur: 0.03, vol: 0.4 });
-}
+// slot machine: no win. A video-slot "you lose": four falling chip notes and a sagging last one
 function slotLose(e: Engine): void {
-  const t = e.ac.currentTime + 0.02;
-  [[784, 0], [659, 0.16], [523, 0.32], [392, 0.48]].forEach(([f, dt]) =>
-    tone(e, t + dt!, { f0: f!, f1: f! * 0.97, dur: dt === 0.48 ? 0.5 : 0.15, vol: 0.12, type: "triangle" }));
+  const { ac, fx } = e;
+  const t = ac.currentTime + 0.02;
+  const lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2400; lp.connect(fx);
+  ([[880, 0, 0.11], [740, 0.13, 0.11], [587, 0.26, 0.11], [440, 0.39, 0.5]] as const).forEach(([f, dt, dur]) => {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = "square"; o.frequency.setValueAtTime(f, t + dt);
+    if (dur > 0.3) o.frequency.exponentialRampToValueAtTime(f * 0.86, t + dt + dur);
+    g.gain.setValueAtTime(0.0001, t + dt); g.gain.exponentialRampToValueAtTime(0.09, t + dt + 0.01);
+    g.gain.setValueAtTime(0.09, t + dt + dur - 0.05); g.gain.exponentialRampToValueAtTime(0.0001, t + dt + dur);
+    o.connect(g).connect(lp); o.start(t + dt); o.stop(t + dt + dur + 0.02);
+  });
 }
 
-const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, tick, clunk, slotLose };
+/** Controls the slot-machine reel sound started by startReelSound(). */
+export interface ReelSound {
+  /** Reel `i` has stopped; `left` reels are still spinning. */
+  stopReel(i: number, left: number): void;
+  /** Cut everything off (the round was interrupted). */
+  end(): void;
+}
+
+/** Lever pull, then the reels' mechanical whir and clatter, which thins out as reels stop. */
+export function startReelSound(reelCount: number): ReelSound | null {
+  const e = ensure();
+  if (!e) return null;
+  const { ac, fx, noise } = e;
+  const t = ac.currentTime + 0.02;
+  // lever pull: a ratchet that speeds up, then the lever bottoming out
+  [0, 0.07, 0.13, 0.18, 0.22, 0.25].forEach((dt) => noiseHit(e, t + dt, { freq: 2600, q: 5, dur: 0.02, vol: 0.55 }));
+  tone(e, t + 0.3, { f0: 130, f1: 60, dur: 0.16, vol: 0.55 });
+  noiseHit(e, t + 0.3, { freq: 420, q: 0.8, dur: 0.1, vol: 0.5, type: "lowpass" });
+  // reels: band-passed noise chopped by a square LFO, a clattery "brrrrr"
+  const src = ac.createBufferSource(), bp = ac.createBiquadFilter(), chop = ac.createGain(), lfo = ac.createOscillator(), depth = ac.createGain(), env = ac.createGain();
+  src.buffer = noise; src.loop = true;
+  bp.type = "bandpass"; bp.frequency.value = 1300; bp.Q.value = 0.9;
+  chop.gain.value = 0.55; lfo.type = "square"; lfo.frequency.value = 15; depth.gain.value = 0.45; lfo.connect(depth).connect(chop.gain);
+  const full = 0.4;
+  env.gain.setValueAtTime(0.0001, t + 0.3); env.gain.exponentialRampToValueAtTime(full, t + 0.45);
+  src.connect(bp).connect(chop).connect(env).connect(fx);
+  src.start(t + 0.3); lfo.start(t + 0.3);
+  let stopped = false;
+  const stopAll = (at: number): void => {
+    if (stopped) return;
+    stopped = true;
+    env.gain.cancelScheduledValues(at); env.gain.setTargetAtTime(0.0001, at, 0.04);
+    src.stop(at + 0.3); lfo.stop(at + 0.3);
+  };
+  // the stop bell climbs reel by reel: C6 D6 E6 G6 A6 C7
+  const BELLS = [1047, 1175, 1319, 1568, 1760, 2093];
+  return {
+    stopReel(i, left) {
+      const now = ac.currentTime + 0.005;
+      tone(e, now, { f0: 170, f1: 70, dur: 0.12, vol: 0.5 });                       // ka-
+      noiseHit(e, now, { freq: 2000, q: 1.2, dur: 0.04, vol: 0.6 });                // -chunk
+      const f = BELLS[i % BELLS.length]!;
+      tone(e, now + 0.01, { f0: f, dur: 0.55, vol: 0.13 });                         // ding
+      tone(e, now + 0.01, { f0: f * 2.76, dur: 0.2, vol: 0.04 });
+      if (left <= 0) stopAll(now);
+      else { env.gain.cancelScheduledValues(now); env.gain.setTargetAtTime(full * (0.35 + 0.65 * left / reelCount), now, 0.05); }
+    },
+    end() { stopAll(ac.currentTime); },
+  };
+}
+
+const SFX = { crack, snap, sparkle, doom, breathe, buzz, womp, crunch, crumple, believe, abduct, rec, windup, slotLose };
 export type SfxName = keyof typeof SFX;
 
 export function playSfx(name: SfxName): void {
